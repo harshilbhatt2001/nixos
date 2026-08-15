@@ -46,9 +46,16 @@
         runtimePkgs)}
     '';
 
+    # Out-of-store config for live editing: /run/hypr/config points at the
+    # local checkout of the hypr config repo, so edits there take effect on
+    # `hyprctl reload` with no rebuild. The reference links the store copy
+    # instead (ln -sfn ''${inputs'.hyprland.packages.repo-files}/* ...).
+    # No trailing slash on the rm target — config may be a symlink into
+    # $HOME and rm -rf must remove the link, never the checkout behind it.
     system.activationScripts.hyprConfig = lib.stringAfter ["specialfs"] ''
-      mkdir -p /run/hypr/config
-      ln -sfn ${inputs'.hyprland.packages.repo-files}/* /run/hypr/config
+      mkdir -p /run/hypr
+      rm -rf /run/hypr/config
+      ln -sfn /home/habh/.config/hypr /run/hypr/config
     '';
   });
   perSystem = {

@@ -15,13 +15,15 @@
     # the reference author's wrapper flake carrying the actual hyprland.lua
     # config (repo-files) and defaultRuntimePkgs; quickshell is a non-flake
     # config repo used as configDir.
-    hyprland.url = "git+https://git.voidarc.co.uk/voidarc/hypr";
+    # Own fork of voidarc/hypr (config repo + wrapper flake).
+    hyprland.url = "github:harshilbhatt2001/hypr";
     otter-launcher = {
       url = "github:kuokuo123/otter-launcher";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Own fork of voidarc/quickshell (non-flake config repo).
     quickshell = {
-      url = "git+https://git.voidarc.co.uk/voidarc/quickshell";
+      url = "github:harshilbhatt2001/quickshell";
       flake = false;
     };
     wshowkeys.url = "github:voidarclabs/wshowkeys";

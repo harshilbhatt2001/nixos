@@ -277,15 +277,15 @@
       "locked": {
         "lastModified": 1786391152,
         "narHash": "sha256-P+dUN0wWRYLop9lLsnCOEi5bYE/GC5LvzV2VZh520TM=",
-        "ref": "refs/heads/main",
+        "owner": "harshilbhatt2001",
+        "repo": "hypr",
         "rev": "b4426becc44de00e891098b9883eca2b2028f981",
-        "revCount": 53,
-        "type": "git",
-        "url": "https://git.voidarc.co.uk/voidarc/hypr"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.voidarc.co.uk/voidarc/hypr"
+        "owner": "harshilbhatt2001",
+        "repo": "hypr",
+        "type": "github"
       }
     },
     "hyprland-guiutils": {
@@ -875,15 +875,15 @@
       "locked": {
         "lastModified": 1786547899,
         "narHash": "sha256-QxLEKq1R455FlEmaarx3cq9mk4jSBxHg3CyseLiOick=",
-        "ref": "refs/heads/main",
+        "owner": "harshilbhatt2001",
+        "repo": "quickshell",
         "rev": "e33041b66c66a1b68930bfd3bb58746ffbd5f4b2",
-        "revCount": 72,
-        "type": "git",
-        "url": "https://git.voidarc.co.uk/voidarc/quickshell"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.voidarc.co.uk/voidarc/quickshell"
+        "owner": "harshilbhatt2001",
+        "repo": "quickshell",
+        "type": "github"
       }
     },
     "root": {
