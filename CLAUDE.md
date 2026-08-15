@@ -96,7 +96,8 @@ nixosConfigurations.anton                  (hosts/anton/default.nix)
    ├── antonConfiguration                  hostname, Limine/Secure Boot, disks
    ├── antonHardware                       wrapped nixos-generate-config scan
    ├── system:   desktop ──imports──▶ core ──▶ user, nix-settings, locale
-   │             desktop also imports network, audio, niri, zen-browser
+   │             desktop also imports network, audio, zen-browser, and the
+   │             two desktop-environment groups (see below)
    ├── attrs:    development ──imports──▶ git, neovim
    └── features: niri = moduleWithSystem ({ self' }: ...)
                     │        installs self'.packages.niri
@@ -115,6 +116,13 @@ Conventions (from the reference):
 - Host-specific facts (hostname, boot chain, partition UUIDs) live only in `hosts/<HOST>/`; everything else must stay host-agnostic so a second host can reuse it.
 
 Deliberate differences from the reference: hardware config is tracked in-repo (`hosts/anton/hardware.nix`) instead of the impure `/etc/nixos/hardware-configuration.nix` import — no `--impure` here, and that's better. Single host (`anton`) and `systems = [ "x86_64-linux" ]` for now.
+
+### Desktop-environment groups
+
+`system/desktop/` composes two selectable desktop environments; drop one from `desktop`'s imports to remove it wholesale:
+
+- **`hyprland`** (`features/hyprland/`, the default) — the reference's custom DE, ported verbatim. The `hyprland` flake input is the reference author's wrapper flake, which carries the actual `hyprland.lua` config (`packages.repo-files`, linked to `/run/hypr/config` by an activation script) and `lib.defaultRuntimePkgs`; the module overrides `runtimePackages` with this repo's wrapped `waybar`/`quickshell`/`otter-launcher`/`wlogout`/`way-edges`/`wshowkeys`/`wpaperd`/`kitty` (one `features/` folder each, also from the reference). It imports `systemTheme` (`system/systemTheme/`: bibata cursor + catppuccin GTK via dconf) and sets `services.displayManager.defaultSession = "hyprland"`, which is what makes it the default session. The `quickshell` input is a non-flake config repo used as `configDir`.
+- **`niriDesktop`** (`system/desktop/niri.nix`) — the pre-hyprland setup: the `niri` feature plus the legacy installer GNOME + GDM. GDM is the display manager for both groups.
 
 ### Wrapped packages
 
@@ -137,7 +145,7 @@ Noctalia is a special case worth knowing: it edits its own config files from its
 
 ## Migration in progress
 
-The installer-generated config has been split into `modules/system/*` along reference lines, but its *settings* were carried over verbatim and are still unreviewed. Notably, GNOME + GDM (`modules/system/desktop/default.nix`) are still enabled alongside niri, and `programs.firefox.enable` rides along in `antonConfiguration.nix`.
+The installer-generated config has been split into `modules/system/*` along reference lines, but its *settings* were carried over verbatim and are still unreviewed. Notably, GNOME + GDM (now grouped with niri in `modules/system/desktop/niri.nix`) are still enabled alongside the hyprland and niri sessions, and `programs.firefox.enable` rides along in `antonConfiguration.nix`.
 
 Don't change base-system behaviour as a side effect of unrelated work — it's being handled deliberately. The restructure itself was verified behaviour-preserving: the `toplevel` drvPath is identical before and after.
 

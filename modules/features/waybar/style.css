@@ -1,0 +1,158 @@
+* {
+  font-family: "Fira Mono Nerd Font Propo";
+  font-size: 16px;
+  font-weight: bold;
+  min-height: 16px;
+  margin: 0;
+  padding: 0;
+}
+
+window#waybar {
+  background: transparent;
+}
+
+.module {
+  background-color: rgba(30, 30, 46, 0.8);
+  margin: 0 3px;
+  padding: 0 9px;
+  border-radius: 7px;
+}
+
+#custom-logo {
+  background-color: #cba6f7;
+  color: #1e1e2e;
+  font-size: 21px;
+}
+
+#workspaces {
+  padding: 3px 4px;
+}
+
+#workspaces button {
+  background-color: #585b70;
+  margin: 0 2px;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+#workspaces button:first-child {
+  border-radius: 5px 2px 2px 5px;
+  margin: 0;
+  margin-right: 2px;
+}
+
+#workspaces button:last-child {
+  border-radius: 2px 5px 5px 4px;
+  margin: 0;
+  margin-left: 2px;
+}
+
+#workspaces button:only-child {
+  border-radius: 5px;
+  padding: 0 12px;
+  margin: 0 1px;
+}
+
+#workspaces button.active {
+  background-color: #b4befe;
+  color: #313244;
+}
+
+#mpris {
+  font-size: 14px;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+}
+
+#mpris.paused {
+  color: #f2cdcd;
+}
+
+#mpris.playing {
+  color: rgba(30, 30, 46, 0.8);
+  background-color: #ca9ee6;
+}
+
+#network {
+  background-color: #f38ba8;
+  color: #1e1e2e;
+}
+
+#bluetooth {
+  background-color: #fab387;
+  color: #1e1e2e;
+}
+
+#custom-notifs {
+  background-color: #f9e2af;
+  color: #1e1e2e;
+}
+
+#battery {
+  background-color: #a6e3a1;
+  color: #1e1e2e;
+  transition:
+    color 0.5s,
+    background-color 0.5s,
+    linear-gradient 0.4s;
+}
+
+#battery.warning {
+  color: #1e1e2e;
+  background: #f38ba8;
+  background: linear-gradient(
+    135deg,
+    rgba(243, 139, 168, 1) 0%,
+    rgba(166, 218, 149, 1) 65%,
+    rgba(166, 218, 149, 1) 100%
+  );
+}
+
+#battery.charging {
+  background-color: #40a02b;
+  background: #cba6f7;
+  background: linear-gradient(
+    135deg,
+    rgba(203, 166, 247, 1) 0%,
+    rgba(166, 218, 149, 1) 65%,
+    rgba(166, 218, 149, 1) 100%
+  );
+}
+
+#battery.plugged {
+  background-color: #40a02b;
+  background: #cba6f7;
+  background: linear-gradient(
+    135deg,
+    rgba(203, 166, 247, 1) 0%,
+    rgba(166, 218, 149, 1) 65%,
+    rgba(166, 218, 149, 1) 100%
+  );
+}
+
+#battery.critical {
+  color: #f38ba8;
+}
+
+#memory {
+  padding-right: 3px;
+  border-radius: 7px 0 0 7px;
+  margin-right: 0;
+  background-color: #89dceb;
+  color: #1e1e2e;
+}
+
+#cpu {
+  padding-left: 3px;
+  border-radius: 0 7px 7px 0;
+  margin-left: 0;
+  background-color: #89dceb;
+  color: #1e1e2e;
+}
+
+#clock {
+  background-color: #89b4fa;
+  color: #1e1e2e;
+}
+

@@ -11,6 +11,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Hyprland desktop, same sources as the reference: the hyprland input is
+    # the reference author's wrapper flake carrying the actual hyprland.lua
+    # config (repo-files) and defaultRuntimePkgs; quickshell is a non-flake
+    # config repo used as configDir.
+    hyprland.url = "git+https://git.voidarc.co.uk/voidarc/hypr";
+    otter-launcher = {
+      url = "github:kuokuo123/otter-launcher";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    quickshell = {
+      url = "git+https://git.voidarc.co.uk/voidarc/quickshell";
+      flake = false;
+    };
+    wshowkeys.url = "github:voidarclabs/wshowkeys";
+
     # Own neovim config, built by its own flake (nix branch). No nixpkgs
     # follows — it builds against its locked nixpkgs, like the reference.
     nvim.url = "github:harshilbhatt2001/nvim/nix";

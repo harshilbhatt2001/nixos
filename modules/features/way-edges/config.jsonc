@@ -1,0 +1,60 @@
+{
+    "allow-trailing-commas": true,
+    "widgets": [
+        {
+            "type": "slider",
+            "edge": "right",
+            "position": "top",
+            "thickness": 30,
+            "length": "25%",
+            "margins": {
+                "top": "50%"
+            },
+            "border-width": 4,
+            "border-color": "#cba6f7ff",
+            "fg-color": "#cba6f7bb",
+            "bg-color": "#31324466",
+            "fg-text-color": "#11111bff",
+            "bg-text-color": "#bac2dedd",
+            "transition-duration": 100,
+            "redraw-only-on-internal-update": true, 
+            "radius": 10, // corner radius
+            "obtuse-angle": 90, // in degrees(90~180). controls how much curve the widget has
+            "scroll-unit": 0.005, 
+            "pinnable": false,
+            "preset": {
+                "type": "speaker",
+                "animation-curve": "Linear", // mute animation
+                "mute-text-color": "#f38ba8ff",
+                "mute-color": "#f38ba8bb",
+            },
+        },
+        {
+            "type": "slider",
+            "edge": "right",
+            "position": "top",
+            "thickness": 30,
+            "length": "25%",
+            "margins": {
+                "top": "25%"
+            },
+            "border-width": 4,
+            "border-color": "#f9e2afff",
+            "fg-color": "#f9e2afbb",
+            "bg-color": "#31324466",
+            "fg-text-color": "#11111bff",
+            "bg-text-color": "#bac2dedd",
+            "transition-duration": 100,
+            "redraw-only-on-internal-update": true, 
+            "radius": 10, // corner radius
+            "obtuse-angle": 90, // in degrees(90~180). controls how much curve the widget has
+            "scroll-unit": 0.005, 
+            "pinnable": false,
+            "preset": {
+                "type": "backlight",
+                "device": "intel_backlight", // this is the name of the device. Find it under `/sys/class/backlight/` It should be something like `nvidia_0`, `intel_0`, etc.
+            },
+        },
+    ]
+}
+
