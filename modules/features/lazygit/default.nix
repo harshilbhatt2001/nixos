@@ -3,21 +3,12 @@
   inputs,
   ...
 }: {
-  flake.nixosModules.lazygit = {
-    pkgs,
-    lib,
-    ...
-  }: {
-    environment.systemPackages = with pkgs; [
+  flake.nixosModules.lazygit = {pkgs, ...}: {
+    environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.lazygit
     ];
   };
-  perSystem = {
-    pkgs,
-    lib,
-    self',
-    ...
-  }: let
+  perSystem = {pkgs, ...}: let
     config-file = pkgs.writeText "config.yml" ''
       gui:
         nerdFontsVersion: "3"
@@ -35,12 +26,7 @@
           output: 'log'
     '';
   in {
-    packages.lazygit = inputs.wrappers.lib.wrapPackage ({
-      config,
-      wlib,
-      lib,
-      ...
-    }: {
+    packages.lazygit = inputs.wrappers.lib.wrapPackage ({...}: {
       inherit pkgs;
       package = pkgs.lazygit;
       flags = {

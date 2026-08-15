@@ -1,14 +1,5 @@
-{
-  self,
-  inputs,
-  ...
-}: {
-  flake.nixosModules.bibataCursors = {
-    pkgs,
-    lib,
-    ...
-  }: let
-  in {
+{...}: {
+  flake.nixosModules.bibataCursors = {pkgs, ...}: {
     fonts.packages = with pkgs.nerd-fonts; [
       fira-mono
     ];

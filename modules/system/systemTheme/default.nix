@@ -1,14 +1,5 @@
-{
-  self,
-  inputs,
-  ...
-}: {
-  flake.nixosModules.systemTheme = {
-    config,
-    pkgs,
-    lib,
-    ...
-  }: let
+{self, ...}: {
+  flake.nixosModules.systemTheme = {...}: let
     modules = with self.nixosModules; [
       bibataCursors
       catppuccinGtk

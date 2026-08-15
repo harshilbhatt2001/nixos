@@ -10,7 +10,7 @@
 
   perSystem = { pkgs, lib, self', inputs', ... }: {
     packages.niri = inputs.wrappers.wrappers.niri.wrap {
-      inherit pkgs; # THIS PART IS VERY IMPORTAINT, I FORGOT IT IN THE VIDEO!!!
+      inherit pkgs; # required: `wrap` takes no implicit pkgs
       settings = {
         spawn-at-startup = [
           (lib.getExe self'.packages.noctalia)

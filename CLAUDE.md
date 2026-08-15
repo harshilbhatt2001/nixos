@@ -149,4 +149,4 @@ The installer-generated config has been split into `modules/system/*` along refe
 
 Don't change base-system behaviour as a side effect of unrelated work — it's being handled deliberately. The restructure itself was verified behaviour-preserving: the `toplevel` drvPath is identical before and after.
 
-`modules/features/noctalia/noctalia.json` is an empty placeholder, referenced by nothing. `modules/features/noctalia/default.nix` currently passes `settings = { }`.
+`modules/features/noctalia/noctalia.json` is a full `dump-noctalia-shell` config dump (bar layout, wallpaper dir, display geometry), referenced by nothing yet — it's staged input for `modules/features/noctalia/default.nix`, which currently passes `settings = { }` and whose comment says to paste the parts worth keeping from exactly such a dump.

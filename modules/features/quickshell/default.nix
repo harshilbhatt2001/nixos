@@ -3,11 +3,7 @@
   inputs,
   ...
 }: {
-  flake.nixosModules.quickshell = moduleWithSystem ({
-    self',
-    pkgs,
-    ...
-  }: {
+  flake.nixosModules.quickshell = moduleWithSystem ({self', ...}: {
     environment.systemPackages = with self'.packages; [
       quickshell
     ];

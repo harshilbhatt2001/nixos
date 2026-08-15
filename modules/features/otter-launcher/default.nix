@@ -11,7 +11,6 @@
   perSystem = {
     pkgs,
     lib,
-    self',
     inputs',
     ...
   }: {

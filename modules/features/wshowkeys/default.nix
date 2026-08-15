@@ -1,11 +1,5 @@
 {moduleWithSystem, ...}: {
-  flake.nixosModules.wshowkeys = moduleWithSystem ({
-    self',
-    pkgs,
-    ...
-  }: let
-    lib = pkgs.lib;
-  in {
+  flake.nixosModules.wshowkeys = moduleWithSystem ({self', ...}: {
     programs.wshowkeys = {
       enable = true;
       package = self'.packages.wshowkeys;
