@@ -1,6 +1,7 @@
-{ self, inputs, ... }: {
+{ inputs, ... }: {
+  # No NixOS module: niri spawns the package directly from its keybinds.
   perSystem = { pkgs, ... }: {
-    packages.myNoctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
+    packages.noctalia = inputs.wrapper-modules.wrappers.noctalia-shell.wrap {
       inherit pkgs;
 
       # `settings` is written to settings.json inside the store and pointed at

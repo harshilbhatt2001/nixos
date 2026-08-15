@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A NixOS flake for a single machine (`anton`), built on the **dendritic pattern**: `flake.nix` is a stub whose only job is to hand `./modules` to `import-tree`, which recursively auto-imports **every `.nix` file** under it as a flake-parts module. There is no explicit import list anywhere — adding a file to `modules/` wires it in, deleting it unwires it.
 
-Non-`.nix` files (e.g. `modules/features/noctalia.json`) are ignored by import-tree and exist only to be referenced from Nix code.
+Non-`.nix` files (e.g. `modules/features/noctalia/noctalia.json`) are ignored by import-tree and exist only to be referenced from Nix code.
 
 ## Commands
 
 ```bash
 nix flake check    # evaluate everything
 nix flake show     # list outputs
-nix build .#myNiri # build one package
+nix build .#niri   # build one wrapped package
 
 # evaluate the whole system closure without building or activating it
 nix eval .#nixosConfigurations.anton.config.system.build.toplevel.drvPath
@@ -26,7 +26,9 @@ Prefer `flake check` or the `eval ... drvPath` line above when verifying a chang
 
 `networking.hostName` matches the flake attribute, so bare `nixos-rebuild switch --flake .` also resolves to `anton`. Keep the two in sync if either is renamed.
 
-`nix flake show` / `flake check` rewrite `flake.lock` if inputs in `flake.nix` are unlocked. This repo is **not** under version control, so that is not undoable — read the lock diff Nix prints before moving on.
+`nix flake show` / `flake check` rewrite `flake.lock` if inputs in `flake.nix` are unlocked — read the lock diff Nix prints before moving on.
+
+This repo is a git repository, and that matters for evaluation: Nix only sees **tracked** files (plus staged/modified ones). An untracked file under `modules/` is invisible to import-tree until `git add` — a new module that "mysteriously" has no effect is usually just untracked.
 
 ## Module conventions
 
@@ -50,29 +52,17 @@ The established shape is: define a named NixOS module under the `flake.nixosModu
 
 Cross-references between files always go through flake outputs, never relative paths:
 
-- `self.nixosModules.<name>` — another module in this repo (`modules/hosts/anton/configuration.nix` composes `antonHardware` and `niri` this way).
-- `self'.packages.<name>` — a package from `perSystem` on the *current* system (`modules/features/niri.nix` uses this for `myNoctalia`).
-- `self.packages.${pkgs.stdenv.hostPlatform.system}.<name>` — the same package from inside a NixOS module, where `self'` is not in scope.
+- `self.nixosModules.<name>` — another module in this repo (`modules/hosts/anton/default.nix` composes the whole system this way).
+- `self'.packages.<name>` — a package from `perSystem` on the *current* system (`modules/features/niri/default.nix` uses this for `noctalia`).
+- `moduleWithSystem ({ self' }: { ... })` — the bridge from a NixOS module to `self'.packages.*` / `inputs'.*`; it's a flake-parts helper available as a top-level module arg alongside `self`/`inputs`. (`self.packages.${pkgs.stdenv.hostPlatform.system}.<name>` works too, but `moduleWithSystem` is the house style.)
 
 Because names are the wiring, a typo or a not-yet-written module is an evaluation error, not a missing-file error.
 
-`modules/hosts/anton/default.nix` sets `systems = [ "x86_64-linux" ]`. This is load-bearing: with no `systems`, `perSystem` silently yields *no* outputs, so `packages` disappears and every `self'.packages.*` reference dangles — while `nixosConfigurations` still appears to evaluate fine.
+`modules/parts.nix` sets `systems = [ "x86_64-linux" ]`. This is load-bearing: with no `systems`, `perSystem` silently yields *no* outputs, so `packages` disappears and every `self'.packages.*` reference dangles — while `nixosConfigurations` still appears to evaluate fine. It's Linux-only because the wrapped desktop packages (niri) don't evaluate on darwin, which would fail `nix flake check`.
 
-### Layout
+## Architecture
 
-Current state — one file per host and per feature, no scaffolding files:
-
-- `modules/hosts/anton/` — the machine.
-  - `default.nix` — `nixosConfigurations.anton`, plus `systems`.
-  - `configuration.nix` — `nixosModules.antonConfiguration`: composes the feature modules and holds the host's own settings.
-  - `hardware.nix` — `nixosModules.antonHardware`, the wrapped `nixos-generate-config` hardware scan.
-- `modules/features/` — one file per composable feature. `niri.nix` is the reference example: it exports the NixOS module *and*, via `perSystem`, the wrapped package that module installs.
-
-The direction of travel is the layered layout described under **Target architecture** below; don't restructure ahead of the migration, but put *new* modules where that layout says they belong.
-
-## Target architecture
-
-`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo will be developed. Same stack — flake-parts + import-tree + wrapper-modules — but with a layered module taxonomy. `modules/parts.nix` (repo-level `systems`) and `modules/system/drivers/amd.nix` are the first pieces of it already copied in.
+`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo is developed. Same stack — flake-parts + import-tree + wrapper-modules — and the same layered module taxonomy, which this repo now follows.
 
 ```
 flake.nix ─── import-tree ./modules ──▶ every .nix file is a flake-parts module
@@ -97,34 +87,34 @@ modules/
                        .<app>                   it installs
 ```
 
-How a host composes, and where packages come from:
+How the host composes, and where packages come from:
 
 ```
-nixosConfigurations.<HOST>                 (hosts/<HOST>/default.nix)
+nixosConfigurations.anton                  (hosts/anton/default.nix)
    │  lists modules by name only: with self.nixosModules; [ ... ]
    │
-   ├── <host>Configuration                 hostname, host-specific settings
-   ├── system:   desktop ──imports──▶ core ──▶ user, boot, nix, hardware, locale
-   │             drivers (amd/intel), network, audio, systemTheme
-   ├── attrs:    development ──imports──▶ git, nvim  (+ extra systemPackages)
-   └── features: <app> = moduleWithSystem ({ self' }: ...)
-                    │        installs self'.packages.<app>
+   ├── antonConfiguration                  hostname, Limine/Secure Boot, disks
+   ├── antonHardware                       wrapped nixos-generate-config scan
+   ├── system:   desktop ──imports──▶ core ──▶ user, nix-settings, locale
+   │             desktop also imports network, audio, niri, zen-browser
+   ├── attrs:    development ──imports──▶ git, neovim
+   └── features: niri = moduleWithSystem ({ self' }: ...)
+                    │        installs self'.packages.niri
                     ▼
-                 perSystem.packages.<app> = inputs.wrappers.wrappers.<app>.wrap {
-                    inherit pkgs; settings = ...; }
+                 perSystem.packages.niri = inputs.wrapper-modules
+                    .wrappers.niri.wrap { inherit pkgs; settings = ...; }
                     │        config baked into the binary; keybinds reference
                     ▼        other apps via lib.getExe self'.packages.<other>
-                 nix run .#<app> works standalone on any machine
+                 nix run .#niri works standalone on any machine
 ```
 
-Key conventions from the reference:
+Conventions (from the reference):
 
 - **Layering is strict**: `system/` never installs wrapped binaries, `attrs/` never defines anything new (imports + plain `environment.systemPackages` only), `features/` is the only place a wrapper lives. A host file is just a module list.
-- **`moduleWithSystem`** (a flake-parts helper, available as a top-level module arg alongside `self`/`inputs`) is the idiomatic bridge from a NixOS module to `self'.packages.*` — the reference uses it everywhere this repo currently uses `self.packages.${pkgs.stdenv.hostPlatform.system}`.
-- Every feature is independently runnable: `nix run .#<app>` — one folder in `features/` per app, folder name = package name = module name.
-- Composition modules put their `imports` list in a `let modules = with self.nixosModules; [ ... ]; in { imports = modules; ... }` block.
+- One folder in `features/` per app; folder name = package name = module name. Every feature with a package is independently runnable: `nix run .#<app>`.
+- Host-specific facts (hostname, boot chain, partition UUIDs) live only in `hosts/<HOST>/`; everything else must stay host-agnostic so a second host can reuse it.
 
-Deliberate differences to keep: this repo tracks hardware in-repo (`hosts/anton/hardware.nix`) instead of the reference's impure `/etc/nixos/hardware-configuration.nix` import — no `--impure` here, and that's better. Single host (`anton`) for now.
+Deliberate differences from the reference: hardware config is tracked in-repo (`hosts/anton/hardware.nix`) instead of the impure `/etc/nixos/hardware-configuration.nix` import — no `--impure` here, and that's better. Single host (`anton`) and `systems = [ "x86_64-linux" ]` for now.
 
 ### Wrapped packages
 
@@ -132,7 +122,7 @@ Desktop programs are wrapped with `inputs.wrapper-modules` rather than configure
 
 `inputs.wrapper-modules.wrappers` lists what can be wrapped; each wrapper's options live in `wrapperModules/<letter>/<name>/module.nix` in that flake's source. Those `module.nix` files carry the option examples and are the reference when a `settings` block won't serialize — there is no published option index.
 
-Wrappers validate the config they generate at **build** time, so a malformed `settings` block passes `nix flake check` and only fails during `nixos-rebuild`. Check a wrapped package on its own (`nix build .#myNiri`) after editing its settings.
+Wrappers validate the config they generate at **build** time, so a malformed `settings` block passes `nix flake check` and only fails during `nixos-rebuild`. Check a wrapped package on its own (`nix build .#niri`) after editing its settings.
 
 For niri specifically, `settings` is serialized to KDL, and an action taking no arguments is written `_: { }`:
 
@@ -147,8 +137,8 @@ Noctalia is a special case worth knowing: it edits its own config files from its
 
 ## Migration in progress
 
-The bottom half of `modules/hosts/anton/configuration.nix` is the installer-generated config, carried over as-is. It has not been reviewed yet — the direction is to peel settings out of it into `modules/features/*` as they get revisited. Notably, GNOME + GDM are still enabled alongside the niri setup from `modules/features/niri.nix`.
+The installer-generated config has been split into `modules/system/*` along reference lines, but its *settings* were carried over verbatim and are still unreviewed. Notably, GNOME + GDM (`modules/system/desktop/default.nix`) are still enabled alongside niri, and `programs.firefox.enable` rides along in `antonConfiguration.nix`.
 
-Don't change base-system behaviour as a side effect of unrelated work — it's being handled deliberately.
+Don't change base-system behaviour as a side effect of unrelated work — it's being handled deliberately. The restructure itself was verified behaviour-preserving: the `toplevel` drvPath is identical before and after.
 
-`modules/features/noctalia.json` is an empty placeholder, referenced by nothing. `modules/features/noctalia.nix` currently passes `settings = { }`.
+`modules/features/noctalia/noctalia.json` is an empty placeholder, referenced by nothing. `modules/features/noctalia/default.nix` currently passes `settings = { }`.

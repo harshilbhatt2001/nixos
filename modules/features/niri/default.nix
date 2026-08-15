@@ -1,17 +1,19 @@
-{ self, inputs, ... }: {
-  flake.nixosModules.niri = { pkgs, lib, ... }: {
-    programs.niri = {
-      enable = true;
-      package = self.packages.${pkgs.stdenv.hostPlatform.system}.myNiri;
-    };
-  };
+{ inputs, moduleWithSystem, ... }: {
+  flake.nixosModules.niri = moduleWithSystem (
+    { self' }: {
+      programs.niri = {
+        enable = true;
+        package = self'.packages.niri;
+      };
+    }
+  );
 
   perSystem = { pkgs, lib, self', inputs', ... }: {
-    packages.myNiri = inputs.wrapper-modules.wrappers.niri.wrap {
+    packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
       inherit pkgs; # THIS PART IS VERY IMPORTAINT, I FORGOT IT IN THE VIDEO!!!
       settings = {
         spawn-at-startup = [
-          (lib.getExe self'.packages.myNoctalia)
+          (lib.getExe self'.packages.noctalia)
         ];
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;
@@ -32,7 +34,7 @@
           # `_: { }` renders an action with no arguments; `null` would emit a
           # literal KDL `null` argument and fail the build-time config check.
           "Mod+Q".close-window = _: { };
-          "Mod+D".spawn-sh = "${lib.getExe self'.packages.myNoctalia} ipc call launcher toggle";
+          "Mod+D".spawn-sh = "${lib.getExe self'.packages.noctalia} ipc call launcher toggle";
           "Mod+W".spawn-sh = lib.getExe inputs'.zen-browser.packages.default;
 
           "Mod+Shift+Slash".show-hotkey-overlay = _: { };
