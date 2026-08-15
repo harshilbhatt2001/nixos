@@ -9,7 +9,7 @@
   );
 
   perSystem = { pkgs, lib, self', inputs', ... }: {
-    packages.niri = inputs.wrapper-modules.wrappers.niri.wrap {
+    packages.niri = inputs.wrappers.wrappers.niri.wrap {
       inherit pkgs; # THIS PART IS VERY IMPORTAINT, I FORGOT IT IN THE VIDEO!!!
       settings = {
         spawn-at-startup = [

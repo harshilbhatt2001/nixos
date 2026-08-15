@@ -62,7 +62,7 @@ Because names are the wiring, a typo or a not-yet-written module is an evaluatio
 
 ## Architecture
 
-`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo is developed. Same stack — flake-parts + import-tree + wrapper-modules — and the same layered module taxonomy, which this repo now follows.
+`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo is developed. Same stack — flake-parts + import-tree + nix-wrapper-modules (input name `wrappers`) — and the same layered module taxonomy, which this repo now follows.
 
 ```
 flake.nix ─── import-tree ./modules ──▶ every .nix file is a flake-parts module
@@ -101,8 +101,8 @@ nixosConfigurations.anton                  (hosts/anton/default.nix)
    └── features: niri = moduleWithSystem ({ self' }: ...)
                     │        installs self'.packages.niri
                     ▼
-                 perSystem.packages.niri = inputs.wrapper-modules
-                    .wrappers.niri.wrap { inherit pkgs; settings = ...; }
+                 perSystem.packages.niri = inputs.wrappers.wrappers
+                    .niri.wrap { inherit pkgs; settings = ...; }
                     │        config baked into the binary; keybinds reference
                     ▼        other apps via lib.getExe self'.packages.<other>
                  nix run .#niri works standalone on any machine
@@ -118,9 +118,9 @@ Deliberate differences from the reference: hardware config is tracked in-repo (`
 
 ### Wrapped packages
 
-Desktop programs are wrapped with `inputs.wrapper-modules` rather than configured via home-manager or dotfiles: `settings` passed to `wrapper-modules.wrappers.<prog>.wrap` becomes the program's config, baked into the package. Keybinds reference other wrapped packages via `lib.getExe self'.packages.<name>`, so config is fully closed over the store — no `$PATH` lookups. `wrap` requires `inherit pkgs;` explicitly.
+Desktop programs are wrapped with the `wrappers` input (BirdeeHub/nix-wrapper-modules) rather than configured via home-manager or dotfiles: `settings` passed to `inputs.wrappers.wrappers.<prog>.wrap` becomes the program's config, baked into the package. Keybinds reference other wrapped packages via `lib.getExe self'.packages.<name>`, so config is fully closed over the store — no `$PATH` lookups. `wrap` requires `inherit pkgs;` explicitly.
 
-`inputs.wrapper-modules.wrappers` lists what can be wrapped; each wrapper's options live in `wrapperModules/<letter>/<name>/module.nix` in that flake's source. Those `module.nix` files carry the option examples and are the reference when a `settings` block won't serialize — there is no published option index.
+`inputs.wrappers.wrappers` lists what can be wrapped; each wrapper's options live in `wrapperModules/<letter>/<name>/module.nix` in that flake's source. Those `module.nix` files carry the option examples and are the reference when a `settings` block won't serialize — there is no published option index.
 
 Wrappers validate the config they generate at **build** time, so a malformed `settings` block passes `nix flake check` and only fails during `nixos-rebuild`. Check a wrapped package on its own (`nix build .#niri`) after editing its settings.
 
