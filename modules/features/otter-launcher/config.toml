@@ -84,13 +84,6 @@ url_encode = true
 unbind_proc = true
 
 [[modules]]
-description = "jellyfin"
-prefix = "jf"
-cmd = """
-hyprctl dispatch  'hl.dsp.exec_cmd("kitty --class jf-tui -e jellyfin-tui", {workspace = "special:music"})'
-"""
-
-[[modules]]
 description = "youtube"
 prefix = "y"
 cmd = """

@@ -7,7 +7,6 @@
   flake.nixosModules.hyprland = moduleWithSystem ({
     self',
     pkgs,
-    inputs',
     ...
   }: {config, ...}: let
     modules = with self.nixosModules; [
@@ -69,7 +68,10 @@
         flags."--config" = "/run/hypr/config/hyprland.lua";
         env."MODULES_ROOT" = "/run/hypr/config/modules";
         runtimePackages =
+          builtins.removeAttrs
           inputs.hyprland.lib.defaultRuntimePkgs.${system}
+          # reference-author services nothing here launches anymore
+          ["syncthing" "gotify-desktop" "wayvnc"]
           // {
             wpaperd = self'.packages.wpaperd;
             kitty = self'.packages.kitty;

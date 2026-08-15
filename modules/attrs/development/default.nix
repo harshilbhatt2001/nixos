@@ -4,6 +4,7 @@
   flake.nixosModules.development = { pkgs, ... }: {
     imports = with self.nixosModules; [
       git
+      lazygit
       neovim
     ];
 
