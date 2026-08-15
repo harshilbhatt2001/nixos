@@ -60,13 +60,71 @@ Because names are the wiring, a typo or a not-yet-written module is an evaluatio
 
 ### Layout
 
-Keep the tree flat — one file per host and per feature, no scaffolding files:
+Current state — one file per host and per feature, no scaffolding files:
 
 - `modules/hosts/anton/` — the machine.
   - `default.nix` — `nixosConfigurations.anton`, plus `systems`.
   - `configuration.nix` — `nixosModules.antonConfiguration`: composes the feature modules and holds the host's own settings.
   - `hardware.nix` — `nixosModules.antonHardware`, the wrapped `nixos-generate-config` hardware scan.
 - `modules/features/` — one file per composable feature. `niri.nix` is the reference example: it exports the NixOS module *and*, via `perSystem`, the wrapped package that module installs.
+
+The direction of travel is the layered layout described under **Target architecture** below; don't restructure ahead of the migration, but put *new* modules where that layout says they belong.
+
+## Target architecture
+
+`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo will be developed. Same stack — flake-parts + import-tree + wrapper-modules — but with a layered module taxonomy. `modules/parts.nix` (repo-level `systems`) and `modules/system/drivers/amd.nix` are the first pieces of it already copied in.
+
+```
+flake.nix ─── import-tree ./modules ──▶ every .nix file is a flake-parts module
+
+modules/
+├── parts.nix          systems = [ ... ]        (repo-wide, enables perSystem)
+│
+├── hosts/<HOST>/      flake.nixosConfigurations.<HOST>
+│                      = nixosSystem { modules = with self.nixosModules; [ ... ] }
+│                      + <host>Configuration: hostname + host-only quirks
+│
+├── attrs/<bundle>/    nixosModules.<bundle>    composition only — imports other
+│                      (development, gaming…)   nixosModules + plain pkgs, no new
+│                                               features defined here
+│
+├── system/<area>/     nixosModules.<area>      base system, NO wrapped binaries
+│                      core/ desktop/ drivers/  (boot, users, locale, network,
+│                      network/ audio/ theme/   audio, gpu, gtk/cursor theme)
+│
+└── features/<app>/    nixosModules.<app>       one folder per app: the NixOS
+                       + perSystem packages     module AND the wrapped binary
+                       .<app>                   it installs
+```
+
+How a host composes, and where packages come from:
+
+```
+nixosConfigurations.<HOST>                 (hosts/<HOST>/default.nix)
+   │  lists modules by name only: with self.nixosModules; [ ... ]
+   │
+   ├── <host>Configuration                 hostname, host-specific settings
+   ├── system:   desktop ──imports──▶ core ──▶ user, boot, nix, hardware, locale
+   │             drivers (amd/intel), network, audio, systemTheme
+   ├── attrs:    development ──imports──▶ git, nvim  (+ extra systemPackages)
+   └── features: <app> = moduleWithSystem ({ self' }: ...)
+                    │        installs self'.packages.<app>
+                    ▼
+                 perSystem.packages.<app> = inputs.wrappers.wrappers.<app>.wrap {
+                    inherit pkgs; settings = ...; }
+                    │        config baked into the binary; keybinds reference
+                    ▼        other apps via lib.getExe self'.packages.<other>
+                 nix run .#<app> works standalone on any machine
+```
+
+Key conventions from the reference:
+
+- **Layering is strict**: `system/` never installs wrapped binaries, `attrs/` never defines anything new (imports + plain `environment.systemPackages` only), `features/` is the only place a wrapper lives. A host file is just a module list.
+- **`moduleWithSystem`** (a flake-parts helper, available as a top-level module arg alongside `self`/`inputs`) is the idiomatic bridge from a NixOS module to `self'.packages.*` — the reference uses it everywhere this repo currently uses `self.packages.${pkgs.stdenv.hostPlatform.system}`.
+- Every feature is independently runnable: `nix run .#<app>` — one folder in `features/` per app, folder name = package name = module name.
+- Composition modules put their `imports` list in a `let modules = with self.nixosModules; [ ... ]; in { imports = modules; ... }` block.
+
+Deliberate differences to keep: this repo tracks hardware in-repo (`hosts/anton/hardware.nix`) instead of the reference's impure `/etc/nixos/hardware-configuration.nix` import — no `--impure` here, and that's better. Single host (`anton`) for now.
 
 ### Wrapped packages
 
