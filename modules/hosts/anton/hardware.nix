@@ -17,8 +17,10 @@
         fsType = "ext4";
       };
 
+    # Dedicated NixOS ESP (nvme0n1p5, "NIXOS-BOOT"). The original 200M ESP
+    # (70CF-316E, nvme0n1p1) is left to Windows and deliberately not mounted.
     fileSystems."/boot" =
-      { device = "/dev/disk/by-uuid/70CF-316E";
+      { device = "/dev/disk/by-uuid/0C92-4ED6";
         fsType = "vfat";
         options = [ "fmask=0077" "dmask=0077" ];
       };
