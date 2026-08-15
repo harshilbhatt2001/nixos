@@ -115,14 +115,15 @@
     "nvim": {
       "inputs": {
         "nixpkgs": "nixpkgs_2",
+        "tomorrow-nvim": "tomorrow-nvim",
         "wrappers": "wrappers"
       },
       "locked": {
-        "lastModified": 1786803814,
-        "narHash": "sha256-/6CA97cKHOPTWSqGm5I1EzEBGRT5Zw4qQrkwL8JsbfU=",
+        "lastModified": 1786805659,
+        "narHash": "sha256-QDxMNBRlLXb16+hRPl3HmAQ4ASyC4C7zzTLoqvaE2gk=",
         "owner": "harshilbhatt2001",
         "repo": "nvim",
-        "rev": "dfb457fe069d20345723cee6ab6483fd40cb0db7",
+        "rev": "d60b81f251ed56115c36555cb5e00284c3851729",
         "type": "github"
       },
       "original": {
@@ -140,6 +141,22 @@
         "nvim": "nvim",
         "wrappers": "wrappers_2",
         "zen-browser": "zen-browser"
+      }
+    },
+    "tomorrow-nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1754942665,
+        "narHash": "sha256-AIFCm5s8vRte8AGYbi1qmnzpb/HKUmV3YJRc7ijWmMo=",
+        "owner": "paul-han-gh",
+        "repo": "tomorrow.nvim",
+        "rev": "1f21b13a0f8040f650c0b98f38b07364c20dfc86",
+        "type": "github"
+      },
+      "original": {
+        "owner": "paul-han-gh",
+        "repo": "tomorrow.nvim",
+        "type": "github"
       }
     },
     "wrappers": {
