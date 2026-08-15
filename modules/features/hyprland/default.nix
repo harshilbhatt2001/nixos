@@ -39,6 +39,8 @@
 
     system.activationScripts.hyprRuntimeEnv = lib.stringAfter ["specialfs"] ''
       mkdir -p /run/hypr-runtime-env/bin
+      # purge links from previous generations so removed packages disappear
+      find /run/hypr-runtime-env/bin -maxdepth 1 -type l -delete
       ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: pkg: ''
           ln -sfn ${runtimeTarget name pkg} /run/hypr-runtime-env/bin/${name}
         '')

@@ -275,11 +275,11 @@
         "wshowkeys": "wshowkeys"
       },
       "locked": {
-        "lastModified": 1786391152,
-        "narHash": "sha256-P+dUN0wWRYLop9lLsnCOEi5bYE/GC5LvzV2VZh520TM=",
+        "lastModified": 1786814633,
+        "narHash": "sha256-3OORi6Wn/2bXxjgLwymfAIE8PDgGWYjWX8NwEafqOc8=",
         "owner": "harshilbhatt2001",
         "repo": "hypr",
-        "rev": "b4426becc44de00e891098b9883eca2b2028f981",
+        "rev": "5f9858865845d53074a10d6aa336e6c67cbce625",
         "type": "github"
       },
       "original": {
@@ -873,11 +873,11 @@
     "quickshell": {
       "flake": false,
       "locked": {
-        "lastModified": 1786547899,
-        "narHash": "sha256-QxLEKq1R455FlEmaarx3cq9mk4jSBxHg3CyseLiOick=",
+        "lastModified": 1786814218,
+        "narHash": "sha256-tEwGoYRxFZ9AcGwIZX0ZE7aAGbNQ6IqbGEXT43U1UzI=",
         "owner": "harshilbhatt2001",
         "repo": "quickshell",
-        "rev": "e33041b66c66a1b68930bfd3bb58746ffbd5f4b2",
+        "rev": "d8b877e22cf6cf594a5faa0db2bf6e0ee3100a8e",
         "type": "github"
       },
       "original": {
