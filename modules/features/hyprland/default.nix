@@ -35,6 +35,9 @@
     environment.systemPackages = with pkgs; [
       hyprlock
       gsettings-desktop-schemas
+      # Also in the wrapper's defaultRuntimePkgs (which serves the binds);
+      # installed here too so it's on PATH in terminals and other sessions.
+      grimblast
     ];
 
     system.activationScripts.hyprRuntimeEnv = lib.stringAfter ["specialfs"] ''
