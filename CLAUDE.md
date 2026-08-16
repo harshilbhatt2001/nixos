@@ -122,7 +122,9 @@ Deliberate differences from the reference: hardware config is tracked in-repo (`
 `system/desktop/` composes two selectable desktop environments; drop one from `desktop`'s imports to remove it wholesale:
 
 - **`hyprland`** (`features/hyprland/`, the default) — the reference's custom DE, ported verbatim. The `hyprland` flake input is the reference author's wrapper flake, which provides the wrapped binary and `lib.defaultRuntimePkgs`. The actual `hyprland.lua` config is **out-of-store**: an activation script symlinks `/run/hypr/config` to the local checkout at `~/.config/hypr` (a clone of the reference author's config repo, with anton-specific tweaks under `if Hostname == "anton"` branches), so config edits apply on `hyprctl reload` with no rebuild — deviating from the reference, which links the store copy (`packages.repo-files`); the module overrides `runtimePackages` with this repo's wrapped `waybar`/`quickshell`/`otter-launcher`/`wlogout`/`way-edges`/`wshowkeys`/`wpaperd`/`kitty` (one `features/` folder each, also from the reference). It imports `systemTheme` (`system/systemTheme/`: bibata cursor + catppuccin GTK via dconf) and sets `services.displayManager.defaultSession = "hyprland"`, which is what makes it the default session. The quickshell config is likewise out-of-store: the wrapper's `--path` points at the local checkout `~/.config/quickshell` (the `quickshell` flake input pins the fork of that config repo but is currently unreferenced by the wrap call).
-- **`niriDesktop`** (`system/desktop/niri.nix`) — the pre-hyprland setup: the `niri` feature plus the legacy installer GNOME + GDM. GDM is the display manager for both groups.
+- **`niriDesktop`** (`system/desktop/niri.nix`) — the pre-hyprland setup: just the `niri` feature. SDDM (`features/sddm`, catppuccin-themed) is the display manager for both groups.
+
+The legacy installer GNOME + GDM were removed deliberately. What GNOME had been enabling implicitly is now explicit: bluetooth/upower/udisks2/gvfs/avahi live in the shared `desktop` module (the verified enable-diff of dropping GNOME), gnome-keyring comes from `programs.niri`'s nixpkgs module (portals' `Secret` backend), portals come from the hyprland/niri nixpkgs modules, and SDDM's PAM service opts into keyring auto-unlock (`features/sddm`) because only GDM did that automatically.
 
 ### Wrapped packages
 
@@ -145,7 +147,7 @@ Noctalia is a special case worth knowing: it edits its own config files from its
 
 ## Migration in progress
 
-The installer-generated config has been split into `modules/system/*` along reference lines, but its *settings* were carried over verbatim and are still unreviewed. Notably, GNOME + GDM (now grouped with niri in `modules/system/desktop/niri.nix`) are still enabled alongside the hyprland and niri sessions, and `programs.firefox.enable` rides along in `antonConfiguration.nix`.
+The installer-generated config has been split into `modules/system/*` along reference lines, but its *settings* were carried over verbatim and are still unreviewed. GNOME + GDM have since been removed (see Desktop-environment groups above); `programs.firefox.enable` still rides along in `antonConfiguration.nix`.
 
 Don't change base-system behaviour as a side effect of unrelated work — it's being handled deliberately. The restructure itself was verified behaviour-preserving: the `toplevel` drvPath is identical before and after.
 
