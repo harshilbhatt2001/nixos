@@ -51,7 +51,7 @@ prefix = "app"
 cmd = """
 hyprctl dispatch 'hl.dsp.window.resize({x = 700, y = 700, window = activewindow})' &&
 hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
-hyprctl dispatch "hl.dsp.exec_cmd('$(fsel --no-exec)')"
+hyprctl dispatch "hl.dsp.exec_cmd('$(@fsel@ --no-exec)')"
 """
 
 [[modules]]
@@ -60,7 +60,7 @@ prefix = "bl"
 cmd = """
 hyprctl dispatch 'hl.dsp.window.resize({x = 650, y = 400, window = activewindow})' &&
 hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
-bluetui
+@bluetui@
 """
 
 [[modules]]
