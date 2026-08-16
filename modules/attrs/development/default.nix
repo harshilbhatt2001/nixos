@@ -3,6 +3,7 @@
   # defined here.
   flake.nixosModules.development = { pkgs, ... }: {
     imports = with self.nixosModules; [
+      devenv
       git
       lazygit
       neovim
@@ -10,7 +11,7 @@
 
     environment.systemPackages = with pkgs; [
       claude-code
-      devenv # per-project dev environments: `devenv init` (see README)
+      opencode
     ];
   };
 }
