@@ -4,6 +4,9 @@
       desktop
       development
       fish
+      nix-ld
+      amdDrivers
+      intelDrivers
       antonHardware
       antonConfiguration
     ];

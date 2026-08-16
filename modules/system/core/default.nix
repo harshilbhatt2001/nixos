@@ -1,9 +1,23 @@
 { self, ... }: {
-  flake.nixosModules.core = {
+  flake.nixosModules.core = { pkgs, ... }: {
     imports = with self.nixosModules; [
       user
       nix-settings
       locale
+      plymouth
+    ];
+
+    services.openssh.enable = true;
+
+    # Everyday CLI baseline, from the reference's core (minus vim — neovim
+    # is its own feature — and with free p7zip instead of p7zip-rar).
+    environment.systemPackages = with pkgs; [
+      unzip
+      p7zip
+      usbutils
+      lsof
+      libnotify
+      wget
     ];
 
     # This value determines the NixOS release from which the default settings
