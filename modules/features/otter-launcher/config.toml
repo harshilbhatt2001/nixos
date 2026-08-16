@@ -1,7 +1,7 @@
 [general]
 default_module = "app" # module to run when no prefix is matched
 empty_module = "app" # run with an empty prompt
-exec_cmd = "zsh -c" # exec command of your shell
+exec_cmd = "@zsh@ -c" # exec command of your shell
 vi_mode = false # set true to use vi keybinds, false emacs keybinds
 esc_to_abort = true # useful for vi users
 cheatsheet_entry = "?" # when prompted, will show a list of configured modules
@@ -67,7 +67,7 @@ bluetui
 description = "nixos wiki"
 prefix = "nw"
 cmd = """
-hyprctl dispatch "hl.dsp.exec_cmd('firefox --new-window https://wiki.nixos.org/w/index.php?search={}')"
+hyprctl dispatch "hl.dsp.exec_cmd('@browser@ --new-window https://wiki.nixos.org/w/index.php?search={}')"
 """
 with_argument = true
 url_encode = true
@@ -77,7 +77,7 @@ unbind_proc = true
 description = "nixpkgs"
 prefix = "nix"
 cmd = """
-hyprctl dispatch "hl.dsp.exec_cmd('firefox --new-window https://search.nixos.org/packages?query={}')"
+hyprctl dispatch "hl.dsp.exec_cmd('@browser@ --new-window https://search.nixos.org/packages?query={}')"
 """
 with_argument = true
 url_encode = true
@@ -87,7 +87,7 @@ unbind_proc = true
 description = "youtube"
 prefix = "y"
 cmd = """
-hyprctl dispatch "hl.dsp.exec_cmd('firefox --new-window https://www.youtube.com')"
+hyprctl dispatch "hl.dsp.exec_cmd('@browser@ --new-window https://www.youtube.com')"
 """
 with_argument = false
 url_encode = true
@@ -97,7 +97,7 @@ unbind_proc = true
 description = "whatsapp"
 prefix = "w"
 cmd = """
-hyprctl dispatch "hl.dsp.exec_cmd('firefox --new-window https://web.whatsapp.com')"
+hyprctl dispatch "hl.dsp.exec_cmd('@browser@ --new-window https://web.whatsapp.com')"
 """
 with_argument = false
 url_encode = true

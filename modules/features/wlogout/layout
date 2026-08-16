@@ -1,6 +1,6 @@
 {
     "label" : "lock",
-    "action" : "hyprlock",
+    "action" : "@hyprlock@",
     "text" : "Lock",
     "keybind" : "l"
 }
@@ -12,19 +12,19 @@
 }
 {
     "label" : "shutdown",
-    "action" : "systemctl poweroff",
+    "action" : "@systemctl@ poweroff",
     "text" : "Shutdown",
     "keybind" : "s"
 }
 {
     "label" : "suspend",
-    "action" : "systemctl suspend",
+    "action" : "@systemctl@ suspend",
     "text" : "Sleep",
     "keybind" : "u"
 }
 {
     "label" : "reboot",
-    "action" : "systemctl reboot",
+    "action" : "@systemctl@ reboot",
     "text" : "Reboot",
     "keybind" : "r"
 }

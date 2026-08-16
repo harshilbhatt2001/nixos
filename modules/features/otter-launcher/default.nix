@@ -21,10 +21,17 @@
           overlay_cmd = "${lib.getExe pkgs.kitty} +kitten icat --fit height --align left --no-trailing-newline ${./cat.png}"
           overlay_trimmed_lines = 0
         '';
+        # close the config over the store: @name@ placeholders in config.toml
+        # become absolute store paths. hyprctl is left PATH-resolved — going
+        # through self'.packages.hyprland would be a dependency cycle, since
+        # this package sits in hyprland's runtimePackages.
         final-config = pkgs.writeText "config.toml" ''
           ${extra-config}
 
-          ${builtins.readFile ./config.toml}
+          ${builtins.replaceStrings
+            ["@zsh@" "@browser@"]
+            [(lib.getExe pkgs.zsh) (lib.getExe inputs'.zen-browser.packages.default)]
+            (builtins.readFile ./config.toml)}
         '';
       in
         inputs.wrappers.lib.wrapPackage ({...}: {

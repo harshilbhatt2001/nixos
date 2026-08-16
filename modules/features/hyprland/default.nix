@@ -63,6 +63,7 @@
     self',
     system,
     inputs',
+    pkgs,
     ...
   }: {
     packages = {
@@ -72,9 +73,14 @@
         runtimePackages =
           builtins.removeAttrs
           inputs.hyprland.lib.defaultRuntimePkgs.${system}
-          # reference-author services nothing here launches anymore
-          ["syncthing" "gotify-desktop" "wayvnc"]
+          # reference-author services nothing here launches anymore,
+          # and firefox — the browser here is zen
+          ["syncthing" "gotify-desktop" "wayvnc" "firefox"]
           // {
+            # PATH-resolved from the out-of-store lua config (binds.lua):
+            # media keys and the Mod+W browser bind
+            playerctl = pkgs.playerctl;
+            zen = inputs'.zen-browser.packages.default;
             wpaperd = self'.packages.wpaperd;
             kitty = self'.packages.kitty;
             otter-launcher = self'.packages.otter-launcher;
