@@ -5,7 +5,7 @@
   #                 It sets services.displayManager.defaultSession, so it is
   #                 the default session at the login screen.
   #  - niriDesktop  (./niri.nix): the pre-hyprland setup — niri plus the
-  #                 legacy installer GNOME + GDM.
+  #                 legacy installer GNOME (its GDM was replaced by sddm).
   # Drop either group here to remove that environment wholesale.
   flake.nixosModules.desktop = {
     imports = with self.nixosModules; [
@@ -13,6 +13,7 @@
       network
       audio
       zen-browser
+      sddm
       hyprland
       niriDesktop
     ];
