@@ -29,8 +29,8 @@
           ${extra-config}
 
           ${builtins.replaceStrings
-            ["@zsh@" "@browser@"]
-            [(lib.getExe pkgs.zsh) (lib.getExe inputs'.zen-browser.packages.default)]
+            ["@fish@" "@browser@"]
+            [(lib.getExe pkgs.fish) (lib.getExe inputs'.zen-browser.packages.default)]
             (builtins.readFile ./config.toml)}
         '';
       in

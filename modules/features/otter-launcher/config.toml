@@ -1,7 +1,7 @@
 [general]
 default_module = "app" # module to run when no prefix is matched
 empty_module = "app" # run with an empty prompt
-exec_cmd = "@zsh@ -c" # exec command of your shell
+exec_cmd = "@fish@ -c" # exec command of your shell
 vi_mode = false # set true to use vi keybinds, false emacs keybinds
 esc_to_abort = true # useful for vi users
 cheatsheet_entry = "?" # when prompted, will show a list of configured modules
