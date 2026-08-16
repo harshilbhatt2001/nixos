@@ -89,6 +89,7 @@
             waybar = self'.packages.waybar;
             wlogout = self'.packages.wlogout;
             way-edges = self'.packages.way-edges;
+            grimblast = self'.packages.grimblast;
           };
       };
     };

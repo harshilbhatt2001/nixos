@@ -1,4 +1,4 @@
-{ self, ... }: {
+{self, ...}: {
   # Shared desktop base plus the two selectable desktop-environment groups:
   #  - hyprland     (features/hyprland): the reference's custom DE — waybar,
   #                 quickshell, otter-launcher, wlogout, way-edges, wpaperd…
@@ -28,9 +28,6 @@
     # Enable CUPS to print documents.
     services.printing.enable = true;
 
-    # The legacy GNOME module used to enable these implicitly; this is the
-    # subset the desktop actually depends on (the exact enable-diff of
-    # dropping GNOME, minus GNOME-only daemons like accounts-daemon).
     hardware.bluetooth.enable = true; # waybar/quickshell bluetooth widgets
     services.upower.enable = true; # quickshell BatteryManager (UPower dbus)
     services.udisks2.enable = true; # removable-drive automount

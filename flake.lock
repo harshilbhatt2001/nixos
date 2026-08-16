@@ -275,11 +275,11 @@
         "wshowkeys": "wshowkeys"
       },
       "locked": {
-        "lastModified": 1786814633,
-        "narHash": "sha256-3OORi6Wn/2bXxjgLwymfAIE8PDgGWYjWX8NwEafqOc8=",
+        "lastModified": 1786865980,
+        "narHash": "sha256-UxViMYmgkgL3zmKZJcdI8q0EBSw89mmHZnCiT//cpYA=",
         "owner": "harshilbhatt2001",
         "repo": "hypr",
-        "rev": "5f9858865845d53074a10d6aa336e6c67cbce625",
+        "rev": "0cd4e929f013c61dc3fae1178627c7ba0fc8a6b3",
         "type": "github"
       },
       "original": {
@@ -701,11 +701,11 @@
     },
     "nixpkgs_5": {
       "locked": {
-        "lastModified": 1786599213,
-        "narHash": "sha256-yNJd40f11EzXBjSByCB7IPpeFFAdeoSKKM67dGkfFoU=",
+        "lastModified": 1786862985,
+        "narHash": "sha256-FBJRXmbGXiSUDvYEbfLYRkckayyZ6SK1UEqhCrIZ2Cs=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "0e251e24a4f24e036a084b6b4b2d2491af4167f4",
+        "rev": "e5bdc4a41d4c072fe1e3787eaa0320a384741d44",
         "type": "github"
       },
       "original": {
@@ -782,15 +782,14 @@
     "nvim": {
       "inputs": {
         "nixpkgs": "nixpkgs_6",
-        "tomorrow-nvim": "tomorrow-nvim",
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1786806744,
-        "narHash": "sha256-TjO+5IvYGcqwBl+ulK0TlgR1vJsZ6BaLmL7WrHNaxbo=",
+        "lastModified": 1786891562,
+        "narHash": "sha256-dv+DYWrIT8+AGcAlgmxBZMrCxCsbilqReag8iFf+pNE=",
         "owner": "harshilbhatt2001",
         "repo": "nvim",
-        "rev": "2554213211f89042011c53c2ed26eb7a2de0b843",
+        "rev": "f2a93ed30ee23c23b16473b1b03351fb28382207",
         "type": "github"
       },
       "original": {
@@ -990,22 +989,6 @@
         "type": "github"
       }
     },
-    "tomorrow-nvim": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1754942665,
-        "narHash": "sha256-AIFCm5s8vRte8AGYbi1qmnzpb/HKUmV3YJRc7ijWmMo=",
-        "owner": "paul-han-gh",
-        "repo": "tomorrow.nvim",
-        "rev": "1f21b13a0f8040f650c0b98f38b07364c20dfc86",
-        "type": "github"
-      },
-      "original": {
-        "owner": "paul-han-gh",
-        "repo": "tomorrow.nvim",
-        "type": "github"
-      }
-    },
     "woomer": {
       "inputs": {
         "crane": "crane",
@@ -1067,11 +1050,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1782135443,
-        "narHash": "sha256-vAmbArdCyjqpVW+37aCy/PMBOLIqukUXLQuEKLwUhA4=",
+        "lastModified": 1786836119,
+        "narHash": "sha256-oXGC2aM3Bh0MidmPwp/3XtNk69Bgni+WzN9iRhhg+HA=",
         "owner": "BirdeeHub",
         "repo": "nix-wrapper-modules",
-        "rev": "6e7f66fa2cdf4d63162580b438f7fcf87c28a46f",
+        "rev": "747261641d825be8d97abf755399b24057140ab6",
         "type": "github"
       },
       "original": {
