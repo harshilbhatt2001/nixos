@@ -1,73 +1,85 @@
+/* Catppuccin mocha powermenu. The layer is shrunk to a centered cluster by
+ * the --margin-* flags in default.nix (native 2560x1440 screen): five cards
+ * of ~300x320 with soft corners on a dimmed backdrop (the hyprland layer
+ * rule adds blur). Icons are 256px renders of the SVGs in icons/src drawn
+ * at a fixed 104px, never upscaled. Hover/focus tints each card with its
+ * action's accent colour. */
+
 * {
 	background-image: none;
 	box-shadow: none;
+	font-family: "FiraMono Nerd Font";
 }
 
 window {
-	background-color: rgba(12, 12, 12, 0.05);
+	background-color: rgba(17, 17, 27, 0.55);
 }
 
 button {
-    border-radius: 0;
-    border-color: #cba6f7;
-	text-decoration-color: #ffffff;
-    color: #FFFFFF;
-	background-color: #313244;
-	border-style: solid none;
-	border-width: 4px;
+	margin: 14px;
+	border-radius: 26px;
+	border: 2px solid rgba(69, 71, 90, 0.8);
+	background-color: rgba(24, 24, 37, 0.85);
+	color: #bac2de;
+	font-size: 17px;
 	background-repeat: no-repeat;
-	background-position: 50% 30%;
-	background-size: 75%;
-}
-
-button:first-child {
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
-}
-
-button:last-child {
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
+	background-position: center 32%;
+	background-size: 104px 104px;
+	padding-top: 150px;
+	transition: all 0.15s ease;
 }
 
 #lock {
-    border-left-style: solid;
-    background-image: image(url("./icons/lock.png"));
+	background-image: image(url("./icons/lock.png"));
 }
 
 #logout {
-    background-image: image(url("./icons/exit.png"));
+	background-image: image(url("./icons/exit.png"));
 }
 
 #suspend {
-    background-image: image(url("./icons/slwwp.png"));
+	background-image: image(url("./icons/sleep.png"));
 }
 
 #shutdown {
-    background-image: image(url("./icons/power.png"));
+	background-image: image(url("./icons/power.png"));
 }
 
 #reboot {
-    border-right-style: solid;
-    background-image: image(url("./icons/reload.png"));
+	background-image: image(url("./icons/reboot.png"));
 }
 
-#lock:focus {
-    background-color: #f38ba8;
+#lock:focus,
+#lock:hover {
+	background-color: rgba(137, 180, 250, 0.12);
+	border-color: #89b4fa;
+	color: #89b4fa;
 }
 
-#logout:focus {
-    background-color: #fab387;
+#logout:focus,
+#logout:hover {
+	background-color: rgba(250, 179, 135, 0.12);
+	border-color: #fab387;
+	color: #fab387;
 }
 
-#shutdown:focus {
-    background-color: #a6e3a1;
+#suspend:focus,
+#suspend:hover {
+	background-color: rgba(249, 226, 175, 0.12);
+	border-color: #f9e2af;
+	color: #f9e2af;
 }
 
-#suspend:focus {
-    background-color: #f9e2af;
+#shutdown:focus,
+#shutdown:hover {
+	background-color: rgba(243, 139, 168, 0.12);
+	border-color: #f38ba8;
+	color: #f38ba8;
 }
 
-#reboot:focus {
-    background-color: #cba6f7;
+#reboot:focus,
+#reboot:hover {
+	background-color: rgba(203, 166, 247, 0.12);
+	border-color: #cba6f7;
+	color: #cba6f7;
 }
