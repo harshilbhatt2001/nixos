@@ -64,6 +64,15 @@ hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
 """
 
 [[modules]]
+description = "wallpaper"
+prefix = "wp"
+cmd = """
+hyprctl dispatch 'hl.dsp.window.resize({x = 900, y = 500, window = activewindow})' &&
+hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
+@wallpaper-picker@
+"""
+
+[[modules]]
 description = "nixos wiki"
 prefix = "nw"
 cmd = """

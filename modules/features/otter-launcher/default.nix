@@ -12,6 +12,7 @@
     pkgs,
     lib,
     inputs',
+    self',
     ...
   }: {
     packages = {
@@ -32,12 +33,13 @@
           ${extra-config}
 
           ${builtins.replaceStrings
-            ["@fish@" "@browser@" "@fsel@" "@bluetui@"]
+            ["@fish@" "@browser@" "@fsel@" "@bluetui@" "@wallpaper-picker@"]
             [
               (lib.getExe pkgs.fish)
               (lib.getExe inputs'.zen-browser.packages.default)
               (lib.getExe pkgs.fsel)
               (lib.getExe pkgs.bluetui)
+              (lib.getExe self'.packages.wallpaper-picker)
             ]
             (builtins.readFile ./config.toml)}
         '';
