@@ -5,6 +5,7 @@
       nix-settings
       locale
       plymouth
+      sudo
     ];
 
     services.openssh.enable = true;
