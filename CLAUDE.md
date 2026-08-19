@@ -62,7 +62,7 @@ Because names are the wiring, a typo or a not-yet-written module is an evaluatio
 
 ## Architecture
 
-`~/ws/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo is developed. Same stack — flake-parts + import-tree + nix-wrapper-modules (input name `wrappers`) — and the same layered module taxonomy, which this repo now follows.
+`~/ws-linux/nixos-reference` (the "Voidarc" dendritic config) is the reference for how this repo is developed. Same stack — flake-parts + import-tree + nix-wrapper-modules (input name `wrappers`) — and the same layered module taxonomy, which this repo now follows.
 
 ```
 flake.nix ─── import-tree ./modules ──▶ every .nix file is a flake-parts module
