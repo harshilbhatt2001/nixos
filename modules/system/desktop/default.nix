@@ -14,6 +14,7 @@
       network
       audio
       zen-browser
+      kitty
       sddm
       hyprland
       niriDesktop

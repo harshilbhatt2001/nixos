@@ -4,10 +4,14 @@
   ...
 }: {
   flake.nixosModules.kitty = moduleWithSystem (
-    {self'}: {
+    {self'}: {lib, ...}: {
       environment.systemPackages = with self'.packages; [
         kitty
       ];
+
+      # kitten ssh fixes terminfo on the remote and enables kitty's shell
+      # integration over ssh.
+      programs.fish.shellAbbrs.ssh = "${lib.getExe' self'.packages.kitty "kitten"} ssh";
     }
   );
   perSystem = {pkgs, ...}: {
