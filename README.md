@@ -1,79 +1,76 @@
 # nixos
 
-NixOS configuration for `anton`, built on the **dendritic pattern**: `flake.nix`
-hands `./modules` to [import-tree](https://github.com/vic/import-tree), which
-auto-imports every `.nix` file as a
-[flake-parts](https://flake.parts) module. There is no import list — adding a
-file wires it in. Desktop apps are configured with
-[nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules): the
-config is baked into each program's binary, so there are no dotfiles and every
-app runs standalone on any machine with nix.
+NixOS config for the machine `anton`.
 
-Modeled on [the Voidarc reference config](~/ws/nixos-reference).
+How it works, in short: every `.nix` file under `modules/` is picked up
+automatically ([import-tree](https://github.com/vic/import-tree) +
+[flake-parts](https://flake.parts)). There is no import list. Add a file and
+it is part of the system; delete it and it is gone. Desktop apps are wrapped
+with [nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules):
+each app's config is baked into its binary, so there are no dotfiles.
 
-## Daily driving
+## Everyday commands
 
 ```bash
-sudo nixos-rebuild switch --flake .   # apply to the running system
-sudo nixos-rebuild build  --flake .   # build without activating
+sudo nixos-rebuild switch --flake .   # apply changes to the running system
+sudo nixos-rebuild build  --flake .   # build only, don't apply
 
-nix flake check                       # evaluate everything (CI-style check)
-nix build .#kitty                     # build one app + validate its config
-nix run .#kitty                       # run one app without installing it
+nix flake check                       # check that everything still evaluates
+nix build .#kitty                     # build one app and validate its config
+nix run .#kitty                       # try one app without installing it
 ```
 
-Two things worth knowing:
+Two rules to remember:
 
-- **Nix only sees git-tracked files.** A new file under `modules/` does
-  nothing until `git add`. If a change "mysteriously" has no effect, check
-  `git status`.
-- **Wrapped-app configs validate at build time, not eval time.** `nix flake
-  check` passes on a broken `settings` block; `nix build .#<app>` is what
-  catches it. Always build the app you just edited.
+- **Nix only sees files that git knows about.** A new file does nothing until
+  you `git add` it. If a change "mysteriously" has no effect, check
+  `git status` first.
+- **A broken app config passes `nix flake check`.** The config is only
+  validated when the app is built. After editing an app's `settings`, run
+  `nix build .#<app>` to catch mistakes.
 
-## Layout — what lives where
+## Where things live
 
 ```
 modules/
-├── parts.nix          flake-parts plumbing (systems)
-├── hosts/anton/       this machine: module list, boot chain, disks, hardware
-├── system/            base system, no apps: core (user/nix/locale),
-│                      desktop, network, audio
-├── attrs/             bundles that compose other modules: development
-└── features/          one folder per app = NixOS module + wrapped binary:
-                       niri, kitty, neovim, noctalia, zen-browser, fish, git
+├── hosts/anton/       this machine: which modules it uses, boot, disks, hardware
+├── system/            base system: user, nix settings, locale, desktop,
+│                      network, audio, drivers, theme
+├── attrs/             bundles of plain packages + other modules (development)
+└── features/          one folder per app: its config + wrapped binary
+                       (niri, hyprland, kitty, neovim, fish, git, waybar, ...)
 ```
 
-The layering is strict:
+Rules of thumb: an app with config goes in `features/`. A plain package with
+no config goes in an `attrs/` bundle. Anything true only for this machine
+goes in `hosts/anton/`. Everything else stays reusable for a future machine.
 
-| Layer | May contain | Never contains |
-|---|---|---|
-| `hosts/` | module list, hostname, partitions, boot | anything reusable |
-| `system/` | base services and settings | wrapped app binaries |
-| `attrs/` | imports of other modules + plain packages | new feature definitions |
-| `features/` | one app: its module and its wrapped package | host-specific facts |
+## How to add a plain package
 
-## Running and testing apps standalone
+For a tool that needs no config (a compiler, a CLI), add it to a bundle in
+`attrs/`. For example, in `modules/attrs/development/default.nix`:
 
-Every feature with a package is independently runnable — the config travels
-with the binary:
+```nix
+environment.systemPackages = with pkgs; [
+  claude-code
+  opencode
+  ripgrep      # <- new package
+];
+```
+
+Then `sudo nixos-rebuild switch --flake .`.
+
+To try a tool first without installing anything:
 
 ```bash
-nix run .#niri        # the window manager, keybinds and all
-nix run .#kitty       # terminal with its baked-in kitty.conf
-nix run .#neovim      # full editor: plugins, LSPs, colorscheme
-nix run .#noctalia    # the shell/launcher
+nix shell nixpkgs#hugo nixpkgs#nodejs   # temporary shell with these tools
+nix run nixpkgs#cowsay -- moo           # run once
 ```
 
-This is also the edit loop: change a feature's `settings`, then
-`nix build .#<app>` (validates the generated config) and `nix run .#<app>`
-(try it live). Nothing touches the running system until you `nixos-rebuild
-switch`.
+## How to add an app with config
 
-## Adding a new app
-
-1. Create `modules/features/<app>/default.nix`. Folder name = package name =
-   module name. Shape:
+1. Create `modules/features/<app>/default.nix`. The folder name, package
+   name, and module name are all the same word. Copy this shape:
 
    ```nix
    { inputs, moduleWithSystem, ... }: {
@@ -92,74 +89,92 @@ switch`.
    }
    ```
 
-   `inputs.wrappers.wrappers` lists what can be wrapped; each wrapper's
-   options live in `wrapperModules/<letter>/<app>/module.nix` in the
+   `inputs.wrappers.wrappers` lists which apps can be wrapped. The options
+   for each app are in `wrapperModules/<letter>/<app>/module.nix` in the
    [nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules)
-   source. Reference other wrapped apps with `lib.getExe
-   self'.packages.<other>` so the dependency is baked in.
+   source. To make one app call another (a keybind that opens a terminal),
+   use `lib.getExe self'.packages.<other>` instead of the plain name.
 
-2. `git add` the folder, then `nix build .#<app>` and `nix run .#<app>`.
+2. `git add` the folder, then test it alone:
 
-3. Wire it in by name: add `<app>` to the imports in
-   `modules/system/desktop/default.nix` (desktop apps) or to the host list in
-   `modules/hosts/anton/default.nix`, then rebuild.
+   ```bash
+   nix build .#<app>   # validates the config
+   nix run .#<app>     # try it live
+   ```
 
-Plain packages that need no config don't get a feature — add them to
-`environment.systemPackages` in an `attrs/` bundle (e.g. `development`).
+3. Wire it into the system by name. Desktop apps go in the imports in
+   `modules/system/desktop/default.nix`; anything else goes in the host list
+   in `modules/hosts/anton/default.nix`. Then rebuild.
 
-## Dev environments & starting projects
+Nothing touches the running system until you `nixos-rebuild switch`.
 
-`claude-code` and `devenv` are installed system-wide via the `development`
-bundle. Per-project environments stay out of the system config entirely —
-pick whichever fits the project:
+## How to add a user
 
-```bash
-# devenv: batteries-included per-project environments
-devenv init            # scaffold devenv.nix + devenv.yaml in the current dir
-devenv shell           # enter the environment
-devenv up              # start declared services (postgres, redis, ...)
+Users are defined in `modules/system/core/user.nix`. Add a block:
 
-# plain flakes: a devShell you define yourself
-nix flake init -t templates#utils   # scaffold a flake.nix (see `nix flake show templates`)
-nix develop                          # enter the devShell
-
-# ad hoc: try a tool without installing anything
-nix shell nixpkgs#hugo nixpkgs#nodejs
-nix run nixpkgs#cowsay -- moo
+```nix
+users.users."alice" = {
+  isNormalUser = true;
+  description = "Alice";
+  extraGroups = [ "networkmanager" "wheel" ];   # wheel = can use sudo
+};
 ```
 
-For automatic activation on `cd`, add `direnv` + `nix-direnv` (works with both
-`devenv` and flake devShells via `use flake` / `use devenv` in an `.envrc`) —
-not installed yet, add it to the `development` bundle when wanted.
+Rebuild, then set a password with `sudo passwd alice`. NixOS does not manage
+passwords here — only the account itself.
 
-## Updating
+## How to set up a dev environment
+
+Per-project environments stay out of the system config. `devenv` is
+installed system-wide and auto-activates when you `cd` into a project (via a
+fish hook):
 
 ```bash
-nix flake update            # bump every input
-nix flake update nvim       # bump one input (e.g. pull new neovim config)
+devenv init      # scaffold devenv.nix in the current project
+devenv allow     # allow auto-activation for this project (once)
+devenv shell     # or enter the environment by hand
+devenv up        # start declared services (postgres, redis, ...)
+```
+
+If you prefer a plain flake instead:
+
+```bash
+nix flake init -t templates#utils   # scaffold a flake.nix
+nix develop                          # enter its devShell
+```
+
+## How to update
+
+```bash
+nix flake update            # update every input
+nix flake update nvim       # update one input
 sudo nixos-rebuild switch --flake .
 ```
 
 Neovim is its own flake at
 [harshilbhatt2001/nvim](https://github.com/harshilbhatt2001/nvim/tree/nix)
-(branch `nix`), with all plugins pinned by nix. Editing it: commit + push to
-the `nix` branch, then `nix flake update nvim` here. Plugin updates happen in
-*that* repo via its own `nix flake update`.
+(branch `nix`). To change it: commit and push there, then
+`nix flake update nvim` here. Its plugins are updated in that repo, not this
+one.
 
-Roll back a bad generation from the boot menu, or:
+If an update breaks something, pick an older generation from the boot menu,
+or:
 
 ```bash
 sudo nixos-rebuild switch --rollback
 ```
 
-## Adding a second host
+## How to add a second machine
 
-1. `modules/hosts/<name>/default.nix` — `flake.nixosConfigurations.<name>`
-   listing modules by name (`with self.nixosModules; [ desktop ... ]`).
-2. `<name>Configuration.nix` — hostname, bootloader, disks.
-3. `hardware.nix` — run `nixos-generate-config`, then wrap the generated body
-   as a flake-parts module (copy the shape of `hosts/anton/hardware.nix`; a
-   bare NixOS module fails with a misleading infinite-recursion error).
+1. Create `modules/hosts/<name>/default.nix` with
+   `flake.nixosConfigurations.<name>`, listing the modules it wants by name
+   (`with self.nixosModules; [ desktop development ... ]`) — copy
+   `hosts/anton/default.nix`.
+2. Add `<name>Configuration.nix` with the hostname, bootloader, and disks.
+3. Run `nixos-generate-config` on the new machine and copy the output into a
+   `hardware.nix`, wrapped the same way as `hosts/anton/hardware.nix`. (Do
+   not paste it in as-is — an unwrapped file fails with a confusing
+   "infinite recursion" error.)
 
-Everything under `system/`, `attrs/`, and `features/` is host-agnostic and
-reusable as-is.
+Everything under `system/`, `attrs/`, and `features/` already works for any
+machine; only the `hosts/<name>/` folder is machine-specific.
