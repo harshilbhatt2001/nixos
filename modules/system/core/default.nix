@@ -19,6 +19,7 @@
       lsof
       libnotify
       wget
+      jq
     ];
 
     # This value determines the NixOS release from which the default settings
