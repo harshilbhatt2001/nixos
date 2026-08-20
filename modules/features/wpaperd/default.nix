@@ -15,7 +15,7 @@
   }: {
     # fzf over the store wallpapers dir (kitty icat preview), then repoint the
     # running daemon. Session-only: the baked config below is what wpaperd
-    # boots with, so a reboot goes back to random-from-dir.
+    # boots with, so a reboot goes back to the default wallpaper.
     packages.wallpaper-picker = pkgs.writeShellApplication {
       name = "wallpaper-picker";
       # SC2016: the single-quoted ''${FZF_*} vars are expanded by fzf, not the shell
@@ -31,18 +31,10 @@
     };
 
     packages.wpaperd = let
+      # One default for every output; wallpaper-picker overrides it per session.
       config-file = builtins.toFile "config.toml" ''
         [any]
-        path = "${./wallpapers}"
-
-        [HDMI-A-1]
-        path = "${./wallpapers/topo1.png}"
-
-        [DP-1]
-        path = "${./wallpapers/topo2.png}"
-
-        [DP-2]
-        path = "${./wallpapers/topo3.png}"
+        path = "${./wallpapers/city-horizon.jpg}"
       '';
     in
       inputs.wrappers.lib.wrapPackage ({...}: {
