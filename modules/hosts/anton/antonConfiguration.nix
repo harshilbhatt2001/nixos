@@ -24,10 +24,10 @@
       '';
     };
 
-    # Gen5 M.2 SSD (slot 1) NTFS data partition (nvme0n1p5), owned by habh
+    # Gen5 M.2 SSD (slot 1) NTFS data partition (nvme0n1p6), owned by habh
     # so no root is needed to read/write it.
-    boot.supportedFilesystems = [ "ntfs" ];
-    fileSystems."/mnt/gen5" = {
+    boot.supportedFilesystems = [ "ntfs" "btrfs" ];
+    fileSystems."/mnt/gen5-ntfs" = {
       device = "/dev/disk/by-uuid/CC1C80041C7FE7BA";
       fsType = "ntfs-3g";
       # dmask/fmask: without them ntfs-3g reports everything as 0777, and
@@ -36,12 +36,20 @@
       options = [ "rw" "uid=1000" "gid=100" "dmask=022" "fmask=133" "nofail" ];
     };
 
-    # ~/ws lives on the data partition (~/ws-linux is the old on-rootfs one).
-    # Only the symlink is declared: tmpfiles skips it if something already
-    # exists at the path, and the target dir was created once by hand — a
-    # `d` rule on this NTFS mount would try to chown and warn on every boot.
+    # Gen5 SSD btrfs data partition (nvme0n1p7).
+    fileSystems."/mnt/gen5-btrfs" = {
+      device = "/dev/disk/by-label/gen5-btrfs";
+      fsType = "btrfs";
+      options = [ "compress=zstd" "nofail" ];
+    };
+
+    # ~/ws lives on the btrfs data partition (~/ws-linux is the old
+    # on-rootfs one). `L+` so the symlink is retargeted even if one already
+    # exists; the `d` rule owns the target dir for habh (fine on btrfs,
+    # unlike the NTFS mount where it would warn on every boot).
     systemd.tmpfiles.rules = [
-      "L /home/habh/ws - - - - /mnt/gen5/ws"
+      "d /mnt/gen5-btrfs/ws 0755 habh users -"
+      "L+ /home/habh/ws - - - - /mnt/gen5-btrfs/ws"
     ];
 
     # sbctl: manage/inspect the Secure Boot keys (`sbctl status`, `sbctl verify`).

@@ -275,11 +275,11 @@
         "wshowkeys": "wshowkeys"
       },
       "locked": {
-        "lastModified": 1787132637,
-        "narHash": "sha256-zRbkLg9wG/KTrTpxn7lEJJOvmWOg9OvZkywd/L3Ut28=",
+        "lastModified": 1787238559,
+        "narHash": "sha256-Pbm3OPq3F0OChoIkti23Qm3EC16yDyYkI9LwGz8B9z8=",
         "owner": "harshilbhatt2001",
         "repo": "hypr",
-        "rev": "7f7d8cc1d3b6b03641b458f1860ec3e9f64f6ab3",
+        "rev": "c8b545f8d10e63611ab511d7e3693e632fd1b772",
         "type": "github"
       },
       "original": {
