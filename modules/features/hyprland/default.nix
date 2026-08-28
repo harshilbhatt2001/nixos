@@ -8,7 +8,7 @@
     self',
     pkgs,
     ...
-  }: {config, ...}: let
+  }: let
     modules = with self.nixosModules; [
       audio
       systemTheme
@@ -16,11 +16,6 @@
 
     runtimePkgs = self'.packages.hyprland.passthru.runtimePackages;
     lib = pkgs.lib;
-
-    runtimeTarget = name: pkg:
-      if config.security.wrappers ? ${name}
-      then "/run/wrappers/bin/${name}"
-      else lib.getExe pkg;
   in {
     imports = modules;
     programs.hyprland = {
@@ -45,7 +40,7 @@
       # purge links from previous generations so removed packages disappear
       find /run/hypr-runtime-env/bin -maxdepth 1 -type l -delete
       ${lib.concatStringsSep "\n" (lib.mapAttrsToList (name: pkg: ''
-          ln -sfn ${runtimeTarget name pkg} /run/hypr-runtime-env/bin/${name}
+          ln -sfn ${lib.getExe pkg} /run/hypr-runtime-env/bin/${name}
         '')
         runtimePkgs)}
     '';
@@ -76,9 +71,9 @@
         runtimePackages =
           builtins.removeAttrs
           inputs.hyprland.lib.defaultRuntimePkgs.${system}
-          # reference-author services nothing here launches anymore,
+          # reference-author programs nothing here launches or binds anymore,
           # and firefox — the browser here is zen
-          ["syncthing" "gotify-desktop" "wayvnc" "firefox"]
+          ["syncthing" "gotify-desktop" "wayvnc" "firefox" "dunst" "woomer" "waybar" "way-edges" "wshowkeys"]
           // {
             # PATH-resolved from the out-of-store lua config (binds.lua):
             # media keys and the Mod+W browser bind
@@ -88,10 +83,7 @@
             kitty = self'.packages.kitty;
             otter-launcher = self'.packages.otter-launcher;
             quickshell = self'.packages.quickshell;
-            wshowkeys = self'.packages.wshowkeys;
-            waybar = self'.packages.waybar;
             wlogout = self'.packages.wlogout;
-            way-edges = self'.packages.way-edges;
             grimblast = self'.packages.grimblast;
           };
       };

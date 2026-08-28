@@ -785,11 +785,11 @@
         "wrappers": "wrappers_2"
       },
       "locked": {
-        "lastModified": 1787234479,
-        "narHash": "sha256-jSD4F2IGqx4+hdBGYyFAgqp3WujFuGJyU0iifEV6E6k=",
+        "lastModified": 1787281246,
+        "narHash": "sha256-jWHcXB7c9QCFZ8ylnlZEy6T+2YvZWEXG4a5TI5i7LUI=",
         "owner": "harshilbhatt2001",
         "repo": "nvim",
-        "rev": "cc4b66ea419b8853ff799e3e0e69f0249b2d7332",
+        "rev": "b49835e5500985b1fa2f35649ad8abf82927d307",
         "type": "github"
       },
       "original": {

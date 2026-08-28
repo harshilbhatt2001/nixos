@@ -54,8 +54,5 @@
 
     # sbctl: manage/inspect the Secure Boot keys (`sbctl status`, `sbctl verify`).
     environment.systemPackages = with pkgs; [ sbctl ];
-
-    # Installer leftover, kept until deliberately removed.
-    programs.firefox.enable = true;
   };
 }

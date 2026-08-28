@@ -1,7 +1,7 @@
 {self, ...}: {
   # Shared desktop base plus the two selectable desktop-environment groups:
-  #  - hyprland     (features/hyprland): the reference's custom DE — waybar,
-  #                 quickshell, otter-launcher, wlogout, way-edges, wpaperd…
+  #  - hyprland     (features/hyprland): the reference's custom DE —
+  #                 quickshell, otter-launcher, wlogout, wpaperd…
   #                 It sets services.displayManager.defaultSession, so it is
   #                 the default session at the login screen.
   #  - niriDesktop  (./niri.nix): the pre-hyprland setup, now just niri
@@ -34,5 +34,10 @@
     services.udisks2.enable = true; # removable-drive automount
     services.gvfs.enable = true; # trash/MTP/network shares in file managers
     services.avahi.enable = true; # network printer discovery for CUPS
+
+    # Secret Service for portals/apps; sddm's PAM hook (features/sddm) unlocks
+    # it at login. Pinned here explicitly — it otherwise rides in only via
+    # programs.niri's module, and dropping niriDesktop would silently lose it.
+    services.gnome.gnome-keyring.enable = true;
   };
 }
