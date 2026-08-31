@@ -17,6 +17,11 @@ let
       # zoxide: `z <dir>` frecency jumps, `zi` interactive via fzf
       ${lib.getExe pkgs.zoxide} init fish | source
 
+      # devenv: auto-activate allowed projects on cd. Lives here, not in
+      # features/devenv, so the standalone wrapped fish gets it too - its
+      # --no-config drops every programs.fish extension.
+      ${lib.getExe pkgs.devenv} hook fish | source
+
       # prompt last: its right prompt wins over any-nix-shell's, and the
       # nix-shell/devshell indicators live in config.toml instead
       ${lib.getExe self'.packages.ohMyPosh} init fish | source
@@ -88,7 +93,16 @@ in {
       # the programs.fish extensions other features contribute on anton
       packages.fish = inputs.wrappers.wrappers.fish.wrap {
         inherit pkgs;
-        configFile.content = cfg.interactiveShellInit;
+        # The wrapper injects this into every fish invocation, interactive or
+        # not; programs.fish guards it on NixOS. Without the guard, carapace's
+        # fish bridge (a non-interactive `fish --no-config -c ...` that is this
+        # wrapper again) re-runs the init and recurses forever on a cold
+        # ~/.cache/carapace cache.
+        configFile.content = ''
+          if status is-interactive
+          ${cfg.interactiveShellInit}
+          end
+        '';
         shellAliases = cfg.shellAliases;
         abbreviations = cfg.shellAbbrs;
         plugins = [ pkgs.fishPlugins.bass ];
