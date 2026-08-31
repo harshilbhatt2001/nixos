@@ -93,6 +93,16 @@ in {
       # the programs.fish extensions other features contribute on anton
       packages.fish = inputs.wrappers.wrappers.fish.wrap {
         inherit pkgs;
+        # The module defaults --no-config to true, which skips fish's stock
+        # init along with user dotfiles: fish_complete_path collapses to one
+        # entry and theme / universal-variable loading is skipped (issue #1).
+        # Sourcing $__fish_data_dir/config.fish by hand is not an option:
+        # nixpkgs fish 4.8 embeds its data files, nothing exists on disk.
+        flags."--no-config" = false;
+        # carapace's generated completers call bare `carapace` from PATH. The
+        # NixOS side gets it from environment.systemPackages; the standalone
+        # wrapper has to bring it along itself.
+        runtimePkgs = [ { data = pkgs.carapace; prefix = true; } ];
         # The wrapper injects this into every fish invocation, interactive or
         # not; programs.fish guards it on NixOS. Without the guard, carapace's
         # fish bridge (a non-interactive `fish --no-config -c ...` that is this
