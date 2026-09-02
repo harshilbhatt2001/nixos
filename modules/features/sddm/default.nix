@@ -3,7 +3,7 @@
     environment.systemPackages = [
       (pkgs.catppuccin-sddm.override {
         flavor = "mocha";
-        font = "Fira Mono Nerd Font";
+        font = "FiraMono Nerd Font";
         fontSize = "11";
         background = null;
       })
