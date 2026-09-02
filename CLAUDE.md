@@ -24,6 +24,8 @@ sudo nixos-rebuild build  --flake .#anton   # build, don't activate
 
 Prefer `flake check` or the `eval ... drvPath` line above when verifying a change — both force full evaluation and catch every error a rebuild would, without touching the running system.
 
+`devenv.nix` at the repo root is the development shell for working *on* this repo (auto-activated by the fish hook, or `devenv shell`): nixd, `nom`/`nvd`/`nix-tree`, difftastic wired into `git diff`, and git hooks (alejandra, deadnix, statix with `statix.toml`, merge-conflict check) that also run after every Claude Code edit via devenv's `claude.code` integration. `rebuild-diff` builds the system closure and shows the package-level diff against the running one. `.mcp.json` and `.claude/settings.json` are generated store symlinks, not tracked. `env.NVIM_COLORSCHEME` there picks the wrapped neovim's colourscheme (read by `init.lua` in the `nvim` input).
+
 `networking.hostName` matches the flake attribute, so bare `nixos-rebuild switch --flake .` also resolves to `anton`. Keep the two in sync if either is renamed.
 
 `nix flake show` / `flake check` rewrite `flake.lock` if inputs in `flake.nix` are unlocked — read the lock diff Nix prints before moving on.

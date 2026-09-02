@@ -1,0 +1,8 @@
+# statix lints (run by the devenv git hook). Two checks are off because they
+# fight house style rather than catch mistakes:
+#   empty_pattern  — `{ ... }:` is the flake-parts module idiom used everywhere here
+#   repeated_keys  — flat `boot.x = …; boot.y = …;` is deliberate; each line is
+#                    greppable and matches the nixos-generate-config output
+disabled = ["empty_pattern", "repeated_keys"]
+nix_version = "2.4"
+ignore = [".devenv", "result"]
