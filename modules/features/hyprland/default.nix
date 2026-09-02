@@ -15,7 +15,7 @@
     ];
 
     runtimePkgs = self'.packages.hyprland.passthru.runtimePackages;
-    lib = pkgs.lib;
+    inherit (pkgs) lib;
     # Shared keymap (features/keymap) as a Lua chunk. binds.lua in the hypr
     # checkout dofile()s /run/hypr/keymap.lua and maps each action to a
     # dispatcher, so shared binds need a rebuild while the hyprland-only binds
@@ -83,7 +83,7 @@
           // {
             # PATH-resolved from the out-of-store lua config (binds.lua):
             # media keys and the Mod+W browser bind
-            playerctl = pkgs.playerctl;
+            inherit (pkgs) playerctl;
             zen = inputs'.zen-browser.packages.default;
             wpaperd = self'.packages.wpaperd;
             kitty = self'.packages.kitty;

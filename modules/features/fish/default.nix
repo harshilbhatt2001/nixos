@@ -102,7 +102,7 @@ in {
     packages.fish = inputs.wrappers.wrappers.fish.wrap {
       inherit pkgs;
       configFile.content = cfg.interactiveShellInit;
-      shellAliases = cfg.shellAliases;
+      inherit (cfg) shellAliases;
       abbreviations = cfg.shellAbbrs;
       plugins = [pkgs.fishPlugins.bass];
     };

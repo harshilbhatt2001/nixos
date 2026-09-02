@@ -5,7 +5,6 @@
   flake.nixosModules.antonHardware = {
     config,
     lib,
-    pkgs,
     modulesPath,
     ...
   }: {
