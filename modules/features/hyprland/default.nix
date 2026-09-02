@@ -16,6 +16,11 @@
 
     runtimePkgs = self'.packages.hyprland.passthru.runtimePackages;
     lib = pkgs.lib;
+    # Shared keymap (features/keymap) as a Lua chunk. binds.lua in the hypr
+    # checkout dofile()s /run/hypr/keymap.lua and maps each action to a
+    # dispatcher, so shared binds need a rebuild while the hyprland-only binds
+    # in binds.lua keep their live-reload workflow.
+    keymapLua = pkgs.writeText "hypr-keymap.lua" self.lib.keymap.toHyprlandLua;
   in {
     imports = modules;
     programs.hyprland = {
@@ -55,6 +60,7 @@
       mkdir -p /run/hypr
       rm -rf /run/hypr/config
       ln -sfn /home/habh/.config/hypr /run/hypr/config
+      ln -sfn ${keymapLua} /run/hypr/keymap.lua
     '';
   });
   perSystem = {
