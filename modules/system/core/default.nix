@@ -1,5 +1,5 @@
-{ self, ... }: {
-  flake.nixosModules.core = { pkgs, ... }: {
+{self, ...}: {
+  flake.nixosModules.core = {pkgs, ...}: {
     imports = with self.nixosModules; [
       user
       nix-settings

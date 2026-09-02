@@ -1,9 +1,9 @@
-{ ... }: {
+{...}: {
   # RX 9070 XT (RDNA 4), the primary GPU. Ported from the reference's
   # amdDrivers minus the ROCm compute stack and the ppfeaturemask
   # overclocking unlock — add those deliberately if compute is ever needed.
   # VA-API/VDPAU come with mesa's radeonsi, no extra driver packages.
-  flake.nixosModules.amdDrivers = { pkgs, ... }: {
+  flake.nixosModules.amdDrivers = {pkgs, ...}: {
     environment.systemPackages = with pkgs; [
       vulkan-tools # vulkaninfo, for sanity-checking the driver stack
     ];

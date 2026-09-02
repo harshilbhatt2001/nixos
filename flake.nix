@@ -33,7 +33,8 @@
     nvim.url = "github:harshilbhatt2001/nvim/nix";
   };
 
-  outputs = inputs: inputs.flake-parts.lib.mkFlake
-    { inherit inputs; }
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake
+    {inherit inputs;}
     (inputs.import-tree ./modules);
 }

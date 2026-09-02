@@ -1,6 +1,6 @@
-{ ... }: {
+{...}: {
   # Host-only settings: hostname, this machine's boot chain and disks.
-  flake.nixosModules.antonConfiguration = { pkgs, ... }: {
+  flake.nixosModules.antonConfiguration = {pkgs, ...}: {
     networking.hostName = "anton";
 
     # Bootloader: Limine on the dedicated NixOS ESP (see hardware.nix).
@@ -26,21 +26,21 @@
 
     # Gen5 M.2 SSD (slot 1) NTFS data partition (nvme0n1p6), owned by habh
     # so no root is needed to read/write it.
-    boot.supportedFilesystems = [ "ntfs" "btrfs" ];
+    boot.supportedFilesystems = ["ntfs" "btrfs"];
     fileSystems."/mnt/gen5-ntfs" = {
       device = "/dev/disk/by-uuid/CC1C80041C7FE7BA";
       fsType = "ntfs-3g";
       # dmask/fmask: without them ntfs-3g reports everything as 0777, and
       # ls highlights every entry as executable/other-writable. 755 dirs,
       # 644 files — nothing on here needs a Unix exec bit.
-      options = [ "rw" "uid=1000" "gid=100" "dmask=022" "fmask=133" "nofail" ];
+      options = ["rw" "uid=1000" "gid=100" "dmask=022" "fmask=133" "nofail"];
     };
 
     # Gen5 SSD btrfs data partition (nvme0n1p7).
     fileSystems."/mnt/gen5-btrfs" = {
       device = "/dev/disk/by-label/gen5-btrfs";
       fsType = "btrfs";
-      options = [ "compress=zstd" "nofail" ];
+      options = ["compress=zstd" "nofail"];
     };
 
     # ~/ws lives on the btrfs data partition (~/ws-linux is the old
@@ -53,6 +53,6 @@
     ];
 
     # sbctl: manage/inspect the Secure Boot keys (`sbctl status`, `sbctl verify`).
-    environment.systemPackages = with pkgs; [ sbctl ];
+    environment.systemPackages = with pkgs; [sbctl];
   };
 }

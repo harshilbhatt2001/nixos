@@ -1,6 +1,6 @@
-{ moduleWithSystem, ... }: {
+{moduleWithSystem, ...}: {
   flake.nixosModules.neovim = moduleWithSystem (
-    { self' }: {
+    {self'}: {
       programs.neovim = {
         enable = true;
         defaultEditor = true;
@@ -9,7 +9,7 @@
     }
   );
 
-  perSystem = { inputs', ... }: {
+  perSystem = {inputs', ...}: {
     packages.neovim = inputs'.nvim.packages.default;
   };
 }

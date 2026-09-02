@@ -1,6 +1,6 @@
-{ inputs, ... }: {
+{inputs, ...}: {
   # No NixOS module: niri spawns the package directly from its keybinds.
-  perSystem = { pkgs, ... }: {
+  perSystem = {pkgs, ...}: {
     packages.noctalia = inputs.wrappers.wrappers.noctalia-shell.wrap {
       inherit pkgs;
 
@@ -8,7 +8,7 @@
       # via NOCTALIA_SETTINGS_FILE, so noctalia's own GUI cannot persist edits
       # back. Run `dump-noctalia-shell` to get the live config as Nix and paste
       # the parts you want to keep in here.
-      settings = { };
+      settings = {};
     };
   };
 }

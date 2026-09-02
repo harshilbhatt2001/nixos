@@ -1,8 +1,15 @@
-{ inputs, moduleWithSystem, ... }:
-let
+{
+  inputs,
+  moduleWithSystem,
+  ...
+}: let
   # Shared between programs.fish (the system carrier below) and the
   # standalone wrapped package in perSystem, so the two can't drift.
-  fishConfig = { pkgs, lib, self' }: {
+  fishConfig = {
+    pkgs,
+    lib,
+    self',
+  }: {
     interactiveShellInit = ''
       # carapace: completions for commands fish has none for
       set -gx CARAPACE_BRIDGES 'zsh,fish,bash,inshellisense'
@@ -49,10 +56,12 @@ in {
   # features/devenv already extend it, and a `--no-config` wrapped fish
   # would silently drop their snippets along with NixOS login-env sourcing.
   flake.nixosModules.fish = moduleWithSystem (
-    { self' }:
-    { pkgs, lib, ... }:
-    let
-      cfg = fishConfig { inherit pkgs lib self'; };
+    {self'}: {
+      pkgs,
+      lib,
+      ...
+    }: let
+      cfg = fishConfig {inherit pkgs lib self';};
     in {
       programs.fish = {
         enable = true;
@@ -75,23 +84,27 @@ in {
     }
   );
 
-  perSystem = { pkgs, lib, self', ... }:
-    let
-      cfg = fishConfig { inherit pkgs lib self'; };
-    in {
-      packages.ohMyPosh = inputs.wrappers.wrappers.oh-my-posh.wrap {
-        inherit pkgs;
-        configFile = ./config.toml;
-      };
-
-      # standalone `nix run .#fish`: same config as the system shell, minus
-      # the programs.fish extensions other features contribute on anton
-      packages.fish = inputs.wrappers.wrappers.fish.wrap {
-        inherit pkgs;
-        configFile.content = cfg.interactiveShellInit;
-        shellAliases = cfg.shellAliases;
-        abbreviations = cfg.shellAbbrs;
-        plugins = [ pkgs.fishPlugins.bass ];
-      };
+  perSystem = {
+    pkgs,
+    lib,
+    self',
+    ...
+  }: let
+    cfg = fishConfig {inherit pkgs lib self';};
+  in {
+    packages.ohMyPosh = inputs.wrappers.wrappers.oh-my-posh.wrap {
+      inherit pkgs;
+      configFile = ./config.toml;
     };
+
+    # standalone `nix run .#fish`: same config as the system shell, minus
+    # the programs.fish extensions other features contribute on anton
+    packages.fish = inputs.wrappers.wrappers.fish.wrap {
+      inherit pkgs;
+      configFile.content = cfg.interactiveShellInit;
+      shellAliases = cfg.shellAliases;
+      abbreviations = cfg.shellAbbrs;
+      plugins = [pkgs.fishPlugins.bass];
+    };
+  };
 }
