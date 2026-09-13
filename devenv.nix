@@ -21,16 +21,9 @@
 
   # Claude Code via devenv's integration rather than the bare package: it
   # writes .claude/settings.json (hooks: git-hooks run after Claude edits a
-  # file) and .mcp.json (the local `devenv mcp` server). The binary itself
-  # comes from the system (attrs/development), so nothing unfree is needed here.
-  claude.code = {
-    enable = true;
-    mcpServers.devenv = {
-      type = "stdio";
-      command = "devenv";
-      args = ["mcp"];
-    };
-  };
+  # file). The binary itself comes from the system (attrs/development), so
+  # nothing unfree is needed here.
+  claude.code.enable = true;
 
   # Colourscheme for the wrapped neovim (features/neovim). init.lua in
   # harshilbhatt2001/nvim reads NVIM_COLORSCHEME at startup and falls back to
