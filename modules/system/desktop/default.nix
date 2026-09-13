@@ -27,6 +27,11 @@
       brightnessctl # any /sys/class/backlight device, incl. ddcci monitors
     ];
 
+    # Native Wayland for Electron/Chromium apps (ytmdesktop, obsidian, …):
+    # nixpkgs' wrappers add the ozone flags only when this is set, otherwise
+    # they run under XWayland.
+    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+
     services.xserver.enable = true;
     services.xserver.xkb = {
       layout = "us";
