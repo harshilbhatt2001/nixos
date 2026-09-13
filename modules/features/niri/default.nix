@@ -46,6 +46,7 @@
           spawn-at-startup = [
             (lib.getExe self'.packages.noctalia)
             (lib.getExe self'.packages.way-edges)
+            (lib.getExe pkgs.hyprpolkitagent) # polkit auth prompts (udisks2, etc.)
           ];
 
           workspaces.music = _: {}; # ytmdesktop scratchpad, see musicToggle
