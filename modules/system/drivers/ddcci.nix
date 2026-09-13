@@ -10,11 +10,13 @@
   #    way-edges' `backlight` slider (via logind SetBrightness, no root) work
   #    unchanged.
   # The driver cannot autoprobe on kernels >= 6.8 (it logs exactly that), so
-  # ddcci-attach instantiates the client by hand: for every connected DRM
-  # connector it follows the connector's `ddc` symlink to the i2c bus and
-  # writes `ddcci 0x37` to that bus's new_device. Bus numbers are not stable
-  # across boots (DP-1 was i2c-7, then i2c-2), hence the symlink rather than
-  # a fixed number. A udev rule re-runs it on DRM hotplug events.
+  # ddcci-attach instantiates the client by hand: it asks `ddcutil detect`
+  # which i2c bus each answering monitor is on and writes `ddcci 0x37` to
+  # that bus's new_device. ddcutil, not sysfs, because on amdgpu a DP
+  # connector's `ddc` symlink points at the legacy i2c bus ("DM i2c hw bus")
+  # while DDC/CI actually travels over the AUX channel ("DM aux hw bus"), and
+  # bus numbers are not stable across boots anyway. A udev rule re-runs it on
+  # DRM hotplug events.
   # If no ddcci* device shows up anyway, check the monitor's OSD for a DDC/CI
   # toggle, and `ddcutil detect` to see whether the monitor answers at all.
   flake.nixosModules.ddcci = {
@@ -36,16 +38,17 @@
       # no RemainAfterExit: the udev rule below re-wants the unit on hotplug,
       # which only re-runs it if it has gone back to inactive
       serviceConfig.Type = "oneshot";
+      path = [pkgs.ddcutil pkgs.gnused];
       script = ''
-        for conn in /sys/class/drm/card*-*; do
-          [ -e "$conn/ddc" ] || continue
-          [ "$(cat "$conn/status")" = connected ] || continue
-          bus=$(basename "$(readlink -f "$conn/ddc")")
-          # already instantiated (i2c client <bus>-0037 present)
-          [ -e "/sys/bus/i2c/devices/''${bus#i2c-}-0037" ] && continue
-          echo "attaching ddcci 0x37 on $bus ($(basename "$conn"))"
-          echo 'ddcci 0x37' > "/sys/bus/i2c/devices/$bus/new_device" || true
-        done
+        # "   I2C bus:          /dev/i2c-7" -> "7", one per detected monitor
+        ddcutil detect --brief 2>/dev/null \
+          | sed -n 's|^ *I2C bus: */dev/i2c-\([0-9]*\)$|\1|p' \
+          | while read -r n; do
+            # already instantiated (i2c client <bus>-0037 present)
+            [ -e "/sys/bus/i2c/devices/$n-0037" ] && continue
+            echo "attaching ddcci 0x37 on i2c-$n"
+            echo 'ddcci 0x37' > "/sys/bus/i2c/devices/i2c-$n/new_device" || true
+          done
       '';
     };
 
