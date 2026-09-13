@@ -36,7 +36,7 @@
   # harshilbhatt2001/nvim reads NVIM_COLORSCHEME at startup and falls back to
   # tomorrow-night when it is unset or unknown. Installed schemes:
   # tomorrow-night, rose-pine, rose-pine-moon, rose-pine-dawn, gruvbox.
-  env.NVIM_COLORSCHEME = "tomorrow-night";
+  env.NVIM_COLORSCHEME = "gruvbox";
 
   scripts.rebuild-diff = {
     description = "build the system closure and show what would change against the running one";
