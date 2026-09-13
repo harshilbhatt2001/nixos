@@ -15,6 +15,9 @@
   #                           per compositor (niri: store path, hyprland: the
   #                           /run/hypr-runtime-env PATH)
   #   launcher                the app launcher (noctalia on niri, otter on hypr)
+  #   music                   toggle the floating YouTube Music scratchpad
+  #                           (spawns ytmdesktop on first use; hyprland:
+  #                           special:music, niri: named workspace "music")
   #   close-window  quit  toggle-floating  maximize  fullscreen
   #   focus-{left,right,up,down}   move-{left,right,up,down}
   #   focus-workspace <n>     move-to-workspace <n>
@@ -68,6 +71,7 @@
       "Mod+Return" = spawn ["kitty"] "terminal (kitty)";
       "Mod+W" = spawn ["zen"] "browser (zen)";
       "Mod+D" = act "launcher" "app launcher";
+      "Mod+S" = act "music" "toggle YouTube Music scratchpad";
 
       # Focus
       "Mod+H" = act "focus-left" "focus left";

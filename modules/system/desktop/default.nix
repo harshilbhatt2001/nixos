@@ -8,7 +8,7 @@
   #                 (the legacy installer GNOME + GDM are gone; sddm is the
   #                 display manager for every session).
   # Drop either group here to remove that environment wholesale.
-  flake.nixosModules.desktop = {
+  flake.nixosModules.desktop = {pkgs, ...}: {
     imports = with self.nixosModules; [
       core
       network
@@ -19,6 +19,12 @@
       hyprland
       niriDesktop
       way-edges # volume/brightness edge sliders, started by both compositors
+      ytmdesktop # Mod+S music scratchpad (features/keymap action `music`)
+    ];
+
+    # Plain desktop utilities shared by every session (no wrapping needed).
+    environment.systemPackages = with pkgs; [
+      brightnessctl # any /sys/class/backlight device, incl. ddcci monitors
     ];
 
     services.xserver.enable = true;

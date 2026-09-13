@@ -20,7 +20,7 @@
             "redraw-only-on-internal-update": true, 
             "radius": 10, // corner radius
             "obtuse-angle": 90, // in degrees(90~180). controls how much curve the widget has
-            "scroll-unit": 0.005, 
+            "scroll-unit": -0.005, // negative: scroll up = louder/brighter
             "pinnable": false,
             "preset": {
                 "type": "speaker",
@@ -48,7 +48,7 @@
             "redraw-only-on-internal-update": true, 
             "radius": 10, // corner radius
             "obtuse-angle": 90, // in degrees(90~180). controls how much curve the widget has
-            "scroll-unit": 0.005, 
+            "scroll-unit": -0.005, // negative: scroll up = louder/brighter
             "pinnable": false,
             "preset": {
                 "type": "backlight",
