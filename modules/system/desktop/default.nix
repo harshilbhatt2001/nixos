@@ -18,6 +18,7 @@
       sddm
       hyprland
       niriDesktop
+      way-edges # volume/brightness edge sliders, started by both compositors
     ];
 
     services.xserver.enable = true;

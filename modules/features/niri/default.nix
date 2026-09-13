@@ -25,6 +25,7 @@
       settings = {
         spawn-at-startup = [
           (lib.getExe self'.packages.noctalia)
+          (lib.getExe self'.packages.way-edges)
         ];
 
         xwayland-satellite.path = lib.getExe pkgs.xwayland-satellite;

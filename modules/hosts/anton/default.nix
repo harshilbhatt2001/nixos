@@ -11,6 +11,7 @@
       nix-ld
       amdDrivers
       intelDrivers
+      ddcci
       antonHardware
       antonConfiguration
     ];

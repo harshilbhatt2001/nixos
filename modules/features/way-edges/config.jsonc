@@ -52,7 +52,9 @@
             "pinnable": false,
             "preset": {
                 "type": "backlight",
-                "device": "intel_backlight", // this is the name of the device. Find it under `/sys/class/backlight/` It should be something like `nvidia_0`, `intel_0`, etc.
+                // no "device": way-edges picks the first /sys/class/backlight
+                // entry, which on anton is the AOC's ddcci<bus> device from
+                // system/drivers/ddcci.nix (there is no laptop panel).
             },
         },
     ]

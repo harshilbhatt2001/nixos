@@ -79,7 +79,7 @@
           inputs.hyprland.lib.defaultRuntimePkgs.${system}
           # reference-author programs nothing here launches or binds anymore,
           # and firefox — the browser here is zen
-          ["syncthing" "gotify-desktop" "wayvnc" "firefox" "dunst" "woomer" "waybar" "way-edges" "wshowkeys"]
+          ["syncthing" "gotify-desktop" "wayvnc" "firefox" "dunst" "woomer" "waybar" "wshowkeys"]
           // {
             # PATH-resolved from the out-of-store lua config (binds.lua):
             # media keys and the Mod+W browser bind
@@ -91,6 +91,7 @@
             quickshell = self'.packages.quickshell;
             wlogout = self'.packages.wlogout;
             grimblast = self'.packages.grimblast;
+            way-edges = self'.packages.way-edges; # autostarted from events.lua
           };
       };
     };
