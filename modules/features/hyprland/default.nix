@@ -92,6 +92,7 @@
             wlogout = self'.packages.wlogout;
             grimblast = self'.packages.grimblast;
             way-edges = self'.packages.way-edges; # autostarted from events.lua
+            ytmdesktop = self'.packages.ytmdesktop; # Mod+S scratchpad (sharedActions.music)
           };
       };
     };

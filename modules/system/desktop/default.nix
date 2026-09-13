@@ -8,7 +8,7 @@
   #                 (the legacy installer GNOME + GDM are gone; sddm is the
   #                 display manager for every session).
   # Drop either group here to remove that environment wholesale.
-  flake.nixosModules.desktop = {
+  flake.nixosModules.desktop = {pkgs, ...}: {
     imports = with self.nixosModules; [
       core
       network
@@ -19,7 +19,18 @@
       hyprland
       niriDesktop
       way-edges # volume/brightness edge sliders, started by both compositors
+      ytmdesktop # Mod+S music scratchpad (features/keymap action `music`)
     ];
+
+    # Plain desktop utilities shared by every session (no wrapping needed).
+    environment.systemPackages = with pkgs; [
+      brightnessctl # any /sys/class/backlight device, incl. ddcci monitors
+    ];
+
+    # Native Wayland for Electron/Chromium apps (ytmdesktop, obsidian, …):
+    # nixpkgs' wrappers add the ozone flags only when this is set, otherwise
+    # they run under XWayland.
+    environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
     services.xserver.enable = true;
     services.xserver.xkb = {
