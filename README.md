@@ -7,7 +7,26 @@ automatically ([import-tree](https://github.com/vic/import-tree) +
 [flake-parts](https://flake.parts)). There is no import list. Add a file and
 it is part of the system; delete it and it is gone. Desktop apps are wrapped
 with [nix-wrapper-modules](https://github.com/BirdeeHub/nix-wrapper-modules):
-each app's config is baked into its binary, so there are no dotfiles.
+each app's config is baked into its binary. The two exceptions are live-edited
+git checkouts: `~/.config/hypr` (Hyprland's lua config) and
+`~/.config/quickshell` (the bar), so edits there apply without a rebuild.
+
+## Fresh install
+
+1. Clone this repo to `~/.config/nixos`.
+2. Clone the two live-edited config repos:
+
+   ```bash
+   git clone https://github.com/harshilbhatt2001/hypr ~/.config/hypr
+   git clone https://github.com/harshilbhatt2001/quickshell ~/.config/quickshell
+   ```
+
+   Without them the system still works: it falls back to the copies pinned in
+   `flake.lock`, which are only as fresh as the last `nix flake update
+   hyprland quickshell`.
+3. Password SSH is off. If you want to log in remotely, put a public key in
+   `~/.ssh/authorized_keys`.
+4. `sudo nixos-rebuild switch --flake .`
 
 ## Everyday commands
 
@@ -38,12 +57,21 @@ modules/
 │                      network, audio, drivers, theme
 ├── attrs/             bundles of plain packages + other modules (development)
 └── features/          one folder per app: its config + wrapped binary
-                       (niri, hyprland, kitty, neovim, fish, git, waybar, ...)
+                       (hyprland, kitty, neovim, fish, git, quickshell, ...)
 ```
 
 Rules of thumb: an app with config goes in `features/`. A plain package with
 no config goes in an `attrs/` bundle. Anything true only for this machine
 goes in `hosts/anton/`. Everything else stays reusable for a future machine.
+
+## Keybinds
+
+`SUPER+SHIFT+backslash` shows every Hyprland bind. The binds defined in Nix
+(`modules/features/keymap`) as a table:
+
+```bash
+nix eval --raw .#lib.keymap.cheatsheet
+```
 
 ## How to add a plain package
 
@@ -104,13 +132,18 @@ nix run nixpkgs#cowsay -- moo           # run once
 
 3. Wire it into the system by name. Desktop apps go in the imports in
    `modules/system/desktop/default.nix`; anything else goes in the host list
-   in `modules/hosts/anton/default.nix`. Then rebuild.
+   in `modules/hosts/anton/default.nix`. Then rebuild. If Hyprland launches
+   the app by name (a bind in `binds.lua`), add it to `runtimePackages` in
+   `modules/features/hyprland/default.nix` as well.
 
 Nothing touches the running system until you `nixos-rebuild switch`.
 
 ## How to add a user
 
-Users are defined in `modules/system/core/user.nix`. Add a block:
+The login user is `flake.lib.user` in `modules/system/core/user.nix`; other
+modules (ddcci, autologin, the config links) read it from there, so renaming
+it is a one-line change. An extra account is an ordinary block in the same
+file's NixOS module:
 
 ```nix
 users.users."alice" = {
@@ -145,11 +178,25 @@ nix develop                          # enter its devShell
 
 ## How to update
 
+Update inputs in groups, each as its own `chore(lock): <inputs>` commit, so a
+regression can be pinned to one bump:
+
 ```bash
-nix flake update            # update every input
-nix flake update nvim       # update one input
+nix flake update nixpkgs zen-browser    # roughly weekly
+nix flake update hyprland quickshell    # after pushing ~/.config/hypr or ~/.config/quickshell
+nix flake update nvim                   # after pushing the nvim repo
+```
+
+Then, from the repo's dev shell, check before switching:
+
+```bash
+rebuild-diff                            # warns about unpushed config work, builds, shows the package diff
 sudo nixos-rebuild switch --flake .
 ```
+
+`desk-status` on its own shows uncommitted or unpushed work in this repo and
+the two config checkouts. Old generations are garbage-collected weekly
+(older than 14 days).
 
 Neovim is its own flake at
 [harshilbhatt2001/nvim](https://github.com/harshilbhatt2001/nvim/tree/nix)
@@ -170,7 +217,9 @@ sudo nixos-rebuild switch --rollback
    `flake.nixosConfigurations.<name>`, listing the modules it wants by name
    (`with self.nixosModules; [ desktop development ... ]`) — copy
    `hosts/anton/default.nix`.
-2. Add `<name>Configuration.nix` with the hostname, bootloader, and disks.
+2. Add `<name>Configuration.nix` with the hostname, `system.stateVersion`
+   (the release you install), bootloader, disks, and GPU quirks such as
+   `AQ_DRM_DEVICES` (see `hosts/anton`).
 3. Run `nixos-generate-config` on the new machine and copy the output into a
    `hardware.nix`, wrapped the same way as `hosts/anton/hardware.nix`. (Do
    not paste it in as-is — an unwrapped file fails with a confusing
