@@ -52,6 +52,17 @@
       "L+ /home/habh/ws - - - - /mnt/gen5-btrfs/ws"
     ];
 
+    # Hybrid graphics: Hyprland (aquamarine) renders on the first device in
+    # AQ_DRM_DEVICES, so the Arrow Lake iGPU does basic compositing and the
+    # 9070 XT's VRAM stays free; frames are copied to the dGPU, which drives
+    # DP-1. cardN numbering isn't stable across boots and the by-path names
+    # contain colons (the list separator), hence the udev symlinks.
+    services.udev.extraRules = ''
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:00:02.0", SYMLINK+="dri/intel-igpu"
+      SUBSYSTEM=="drm", KERNEL=="card[0-9]*", KERNELS=="0000:04:00.0", SYMLINK+="dri/amd-dgpu"
+    '';
+    environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/intel-igpu:/dev/dri/amd-dgpu";
+
     # sbctl: manage/inspect the Secure Boot keys (`sbctl status`, `sbctl verify`).
     environment.systemPackages = with pkgs; [sbctl];
   };

@@ -10,6 +10,7 @@
       zen-browser
       kitty
       sddm
+      systemTheme # cursor, GTK theme and fonts, for every session
       hyprland
       way-edges # volume/brightness edge sliders, autostarted from events.lua
       ytmdesktop # Mod+S music scratchpad (features/keymap action `music`)
@@ -24,7 +25,6 @@
     # nixpkgs' wrappers add the ozone flags only when this is set, otherwise
     # they run under XWayland.
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
-    environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
 
     services.xserver.enable = true;
     services.xserver.xkb = {
@@ -42,6 +42,7 @@
     # Windows NTFS ones) need org.freedesktop.udisks2.filesystem-mount-system,
     # which defaults to auth_admin. Let wheel do it without a prompt so file
     # managers work even when no polkit agent is running in the session.
+    security.polkit.enable = true;
     security.polkit.extraConfig = ''
       polkit.addRule(function(action, subject) {
         if (action.id.indexOf("org.freedesktop.udisks2.") === 0 &&

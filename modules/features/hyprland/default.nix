@@ -9,11 +9,6 @@
     pkgs,
     ...
   }: let
-    modules = with self.nixosModules; [
-      audio
-      systemTheme
-    ];
-
     runtimePkgs = self'.packages.hyprland.passthru.runtimePackages;
     inherit (pkgs) lib;
     # Shared keymap (features/keymap) as a Lua chunk. binds.lua in the hypr
@@ -22,15 +17,12 @@
     # in binds.lua keep their live-reload workflow.
     keymapLua = pkgs.writeText "hypr-keymap.lua" self.lib.keymap.toHyprlandLua;
   in {
-    imports = modules;
     programs.hyprland = {
       enable = true;
       package = self'.packages.hyprland;
     };
 
     services.displayManager.defaultSession = "hyprland";
-    services.xserver.enable = true;
-    security.polkit.enable = true;
 
     environment.systemPackages = with pkgs; [
       hyprlock
