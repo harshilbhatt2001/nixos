@@ -48,7 +48,8 @@ prefix = "app"
 cmd = """
 hyprctl dispatch 'hl.dsp.window.resize({x = 700, y = 700, window = activewindow})' &&
 hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
-hyprctl dispatch "hl.dsp.exec_cmd('$(@fsel@ --refresh-cache --no-exec)')"
+@fsel@ --refresh-cache >/dev/null &&
+hyprctl dispatch "hl.dsp.exec_cmd('$(@fsel@ --no-exec)')"
 """
 
 [[modules]]
