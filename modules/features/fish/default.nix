@@ -43,7 +43,9 @@
       nsh = "nix-shell -p";
       # The reference derives the flake path from $PWD at build time,
       # which needs --impure; this repo lives at a fixed path instead.
-      nrs = "sudo nixos-rebuild switch --flake ~/.config/nixos";
+      # nom renders the build progress; it needs the internal-json log
+      # format, and -v so build logs reach it at all. `&|` is fish for |&.
+      nrs = "sudo nixos-rebuild switch --flake ~/.config/nixos --log-format internal-json -v &| ${lib.getExe pkgs.nix-output-monitor} --json";
       vinix = "nvim ~/.config/nixos";
     };
   };
