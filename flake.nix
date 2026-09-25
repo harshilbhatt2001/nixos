@@ -19,14 +19,15 @@
     # pushed state, which is the fallback config when a checkout is missing
     # (features/hyprland, features/quickshell). Bump them after pushing.
     # Own fork of voidarc/hypr: config repo + wrapper flake (packages.default,
-    # packages.repo-files). Everything follows the system nixpkgs, including
-    # hyprwm's Hyprland, so its mesa matches the system's; there is no binary
-    # cache for it either way.
+    # packages.repo-files). Its own inputs follow the system nixpkgs, but NOT
+    # hyprwm's Hyprland (inputs.hyprland.inputs.hyprland): that flake only
+    # builds against the nixpkgs it pins — following ours pairs its pinned
+    # hyprutils with our newer hyprtoolkit, and hyprtoolkit fails to
+    # configure. The cost is a mesa older than the system's in the compositor.
     hyprland = {
       url = "github:harshilbhatt2001/hypr";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.otter-launcher.follows = "otter-launcher";
-      inputs.hyprland.inputs.nixpkgs.follows = "nixpkgs";
       inputs.wrappers.inputs.nixpkgs.follows = "nixpkgs";
       inputs.woomer.inputs.nixpkgs.follows = "nixpkgs";
     };

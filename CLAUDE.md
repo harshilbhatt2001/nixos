@@ -127,7 +127,7 @@ Deliberate differences from the reference: hardware config is tracked in-repo (`
 
 ### Flake inputs
 
-Everything follows the system `nixpkgs` — `wrappers`, `zen-browser`, `otter-launcher`, the `hyprland` fork and its sub-inputs, including hyprwm's Hyprland itself (so the compositor links the system mesa). There is no Hyprland binary cache configured, so a Hyprland bump builds it from source. `nvim` deliberately keeps its own locked nixpkgs (it only shares `wrappers`). Adding an input: give it `inputs.nixpkgs.follows = "nixpkgs"` unless there's a reason not to, and check `flake.lock` for new `nixpkgs_N` nodes.
+Everything follows the system `nixpkgs` — `wrappers`, `zen-browser`, `otter-launcher`, the `hyprland` fork and its sub-inputs — **except hyprwm's Hyprland** (`hyprland/hyprland`), which must keep the nixpkgs it pins: making it follow ours mixes its pinned hyprutils with our newer hyprtoolkit and the build fails ("Requested 'hyprutils >= 0.14.2' but version of hyprutils is 0.14.0"). The compositor therefore links an older mesa than the system. There is no Hyprland binary cache configured, so a Hyprland bump builds it from source. `nvim` deliberately keeps its own locked nixpkgs (it only shares `wrappers`). Adding an input: give it `inputs.nixpkgs.follows = "nixpkgs"` unless there's a reason not to, and check `flake.lock` for new `nixpkgs_N` nodes.
 
 ### Desktop
 
