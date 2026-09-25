@@ -31,9 +31,29 @@
   # tomorrow-night, rose-pine, rose-pine-moon, rose-pine-dawn, gruvbox.
   env.NVIM_COLORSCHEME = "gruvbox";
 
+  # The desktop runs from two live-edited checkouts besides this repo; the
+  # flake pins their pushed state as the fallback config. Flags anything
+  # uncommitted or unpushed in any of the three.
+  scripts.desk-status = {
+    description = "show uncommitted/unpushed work in this repo, ~/.config/hypr and ~/.config/quickshell";
+    exec = ''
+      for repo in "$DEVENV_ROOT" "$HOME/.config/hypr" "$HOME/.config/quickshell"; do
+        printf '%s: ' "$repo"
+        if ! git -C "$repo" rev-parse --git-dir >/dev/null 2>&1; then
+          echo "missing (the flake's pinned copy is in use)"
+          continue
+        fi
+        dirty=$(git -C "$repo" status --porcelain | wc -l)
+        ahead=$(git -C "$repo" rev-list --count '@{upstream}..HEAD' 2>/dev/null || echo "?")
+        if [ "$dirty" = 0 ] && [ "$ahead" = 0 ]; then echo clean; else echo "$dirty changed, $ahead unpushed"; fi
+      done
+    '';
+  };
+
   scripts.rebuild-diff = {
     description = "build the system closure and show what would change against the running one";
     exec = ''
+      desk-status
       nom build ".#nixosConfigurations.$(hostname).config.system.build.toplevel" "$@"
       nvd diff /run/current-system ./result
     '';

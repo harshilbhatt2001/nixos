@@ -190,8 +190,22 @@
     }) (lib.sort builtins.lessThan (builtins.attrNames binds));
   in
     "-- generated from modules/features/keymap in the nixos repo; do not edit\nreturn " + lib.generators.toLua {} entries + "\n";
+
+  # Markdown table of the shared binds, for humans:
+  #   nix eval --raw .#lib.keymap.cheatsheet
+  # (Hyprland-only binds live in binds.lua; SUPER+SHIFT+backslash shows all.)
+  cheatsheet = let
+    row = key: let
+      b = binds.${key};
+    in "| `${key}` | ${
+      if b.desc != ""
+      then b.desc
+      else b.action
+    } |";
+  in
+    lib.concatStringsSep "\n" (["| Key | Does |" "| --- | --- |"] ++ map row (lib.sort builtins.lessThan (builtins.attrNames binds))) + "\n";
 in {
   # No NixOS module and no package: pure data plus translators, exposed as a
   # flake lib so features/hyprland can pull it in by name.
-  flake.lib.keymap = {inherit binds toHyprlandLua toHyprKey;};
+  flake.lib.keymap = {inherit binds cheatsheet toHyprlandLua toHyprKey;};
 }
