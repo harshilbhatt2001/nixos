@@ -1,13 +1,9 @@
 {
-  self,
   inputs,
+  self,
   ...
 }: {
-  flake.nixosModules.lazygit = {pkgs, ...}: {
-    environment.systemPackages = [
-      self.packages.${pkgs.stdenv.hostPlatform.system}.lazygit
-    ];
-  };
+  flake.nixosModules.lazygit = self.lib.installFeature "lazygit";
   perSystem = {pkgs, ...}: let
     config-file = pkgs.writeText "config.yml" ''
       gui:
