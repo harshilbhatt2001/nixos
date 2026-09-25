@@ -17,7 +17,6 @@
     pkgs,
     lib,
     self',
-    inputs',
     ...
   }: {
     packages.niri = let
@@ -77,7 +76,7 @@
             self.lib.keymap.toNiri {
               resolve = {
                 kitty = lib.getExe self'.packages.kitty;
-                zen = lib.getExe inputs'.zen-browser.packages.default;
+                zen = lib.getExe self'.packages.zen-browser;
                 wpctl = "${pkgs.wireplumber}/bin/wpctl";
                 playerctl = lib.getExe pkgs.playerctl;
               };

@@ -33,12 +33,13 @@
           ${extra-config}
 
           ${builtins.replaceStrings
-            ["@fish@" "@browser@" "@fsel@" "@bluetui@" "@wallpaper-picker@"]
+            ["@fish@" "@browser@" "@fsel@" "@bluetui@" "@wiremix@" "@wallpaper-picker@"]
             [
               (lib.getExe pkgs.fish)
-              (lib.getExe inputs'.zen-browser.packages.default)
+              (lib.getExe self'.packages.zen-browser)
               (lib.getExe pkgs.fsel)
               (lib.getExe pkgs.bluetui)
+              (lib.getExe pkgs.wiremix)
               (lib.getExe self'.packages.wallpaper-picker)
             ]
             (builtins.readFile ./config.toml)}

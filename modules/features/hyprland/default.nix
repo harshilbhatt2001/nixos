@@ -84,7 +84,7 @@
             # PATH-resolved from the out-of-store lua config (binds.lua):
             # media keys and the Mod+W browser bind
             inherit (pkgs) playerctl;
-            zen = inputs'.zen-browser.packages.default;
+            zen = self'.packages.zen-browser;
             wpaperd = self'.packages.wpaperd;
             kitty = self'.packages.kitty;
             otter-launcher = self'.packages.otter-launcher;

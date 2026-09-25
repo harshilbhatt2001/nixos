@@ -16,6 +16,9 @@
       # default location), so edits apply on quickshell restart with no
       # rebuild. Store-pinned variant: configDir = inputs.quickshell;
       configDir = "/home/habh/.config/quickshell";
+      # The bar's calendar shells out to gcalcli; the now-playing toast reads
+      # cava's raw output for its visualizer.
+      runtimePkgs = [pkgs.gcalcli pkgs.cava];
     };
   };
 }

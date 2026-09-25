@@ -61,6 +61,15 @@ hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
 """
 
 [[modules]]
+description = "audio"
+prefix = "au"
+cmd = """
+hyprctl dispatch 'hl.dsp.window.resize({x = 900, y = 500, window = activewindow})' &&
+hyprctl dispatch 'hl.dsp.window.center({window = activewindow})'&&
+@wiremix@
+"""
+
+[[modules]]
 description = "wallpaper"
 prefix = "wp"
 cmd = """

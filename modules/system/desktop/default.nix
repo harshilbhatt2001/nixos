@@ -31,6 +31,7 @@
     # nixpkgs' wrappers add the ozone flags only when this is set, otherwise
     # they run under XWayland.
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
+    environment.sessionVariables.AQ_DRM_DEVICES = "/dev/dri/card0:/dev/dri/card1";
 
     services.xserver.enable = true;
     services.xserver.xkb = {

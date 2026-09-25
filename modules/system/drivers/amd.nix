@@ -16,5 +16,14 @@
       # plymouth renders) from the first frames of boot.
       amdgpu.initrd.enable = true;
     };
+
+    # PyTorch (and anything else linking a libdrm that isn't the store one,
+    # e.g. the ROCm wheels in ~/ws/comfyui) looks the GPU's marketing name up
+    # at the FHS path libdrm was built with, and prints
+    # "(null): No such file or directory" plus a generic "AMD Radeon Graphics"
+    # when it misses. `L+` retargets the link across libdrm bumps.
+    systemd.tmpfiles.rules = [
+      "L+ /opt/amdgpu/share/libdrm/amdgpu.ids - - - - ${pkgs.libdrm}/share/libdrm/amdgpu.ids"
+    ];
   };
 }

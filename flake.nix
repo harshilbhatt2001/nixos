@@ -2,6 +2,13 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
+    # FIXME: devenv >= 2.3.0 crashes on shell entry ("Shell session error:
+    # terminal error: invalid value"), which breaks the fish auto-activation
+    # hook. Pinned to the last nixpkgs revision carrying devenv 2.2.2 until
+    # https://github.com/cachix/devenv/issues/3183 is fixed; then drop this
+    # input and go back to pkgs.devenv in modules/features/devenv.
+    #nixpkgs-devenv.url = "github:nixos/nixpkgs/34ab99075ac4f7e40cf037eef32cb1c360bb85e9";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:vic/import-tree";
     wrappers.url = "github:BirdeeHub/nix-wrapper-modules";
