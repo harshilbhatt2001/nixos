@@ -1,13 +1,9 @@
 {
-  moduleWithSystem,
+  self,
   inputs,
   ...
 }: {
-  flake.nixosModules.wpaperd = moduleWithSystem ({self', ...}: {
-    environment.systemPackages = with self'.packages; [
-      wpaperd
-    ];
-  });
+  flake.nixosModules.wpaperd = self.lib.installFeature "wpaperd";
   perSystem = {
     pkgs,
     lib,

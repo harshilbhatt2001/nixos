@@ -1,13 +1,9 @@
 {
   inputs,
-  moduleWithSystem,
+  self,
   ...
 }: {
-  flake.nixosModules.way-edges = moduleWithSystem ({self', ...}: {
-    environment.systemPackages = with self'.packages; [
-      way-edges
-    ];
-  });
+  flake.nixosModules.way-edges = self.lib.installFeature "way-edges";
   perSystem = {pkgs, ...}: {
     packages.way-edges = inputs.wrappers.lib.wrapPackage ({...}: {
       inherit pkgs;

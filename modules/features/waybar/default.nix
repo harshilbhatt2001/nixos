@@ -1,13 +1,9 @@
 {
-  moduleWithSystem,
+  self,
   inputs,
   ...
 }: {
-  flake.nixosModules.waybar = moduleWithSystem ({self', ...}: {
-    environment.systemPackages = with self'.packages; [
-      waybar
-    ];
-  });
+  flake.nixosModules.waybar = self.lib.installFeature "waybar";
   perSystem = {pkgs, ...}: {
     packages.waybar = inputs.wrappers.wrappers.waybar.wrap {
       inherit pkgs;
