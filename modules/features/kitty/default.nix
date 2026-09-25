@@ -33,6 +33,15 @@
         cursor_trail_color = "#cba6f7";
         cursor_shape = "beam";
         allow_remote_control = true;
+
+        # kitty >= 0.49 also remembers whether the last-closed OS window was
+        # maximized (~/.cache/kitty/main.json "window-state") and reapplies it
+        # to every new window when this is on; --start-as=normal does not
+        # override it. That turned the otter-launcher popup (and every other
+        # floating kitty) into a maximized window after a maximized terminal
+        # was closed. Under Hyprland the compositor and window rules own the
+        # size anyway, so nothing is lost.
+        remember_window_size = false;
       };
       keybindings = {
         "ctrl+backspace" = "send_text all \\x17";
