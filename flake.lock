@@ -221,11 +221,11 @@
         "wshowkeys": "wshowkeys"
       },
       "locked": {
-        "lastModified": 1788367739,
-        "narHash": "sha256-AO+MSAX7EtnsZ0onZnC98PiDjoAbnkghV5RR8/k4gwc=",
+        "lastModified": 1790351764,
+        "narHash": "sha256-8T3HCQquFaz2hyrrE7UyVZvIVPux9YNAUu74uMo9wgY=",
         "owner": "harshilbhatt2001",
         "repo": "hypr",
-        "rev": "c05da889e2b840a5287b481c307045b87ed7a5dd",
+        "rev": "3f6b0de23bc9247e394877e12299983bbdbb9296",
         "type": "github"
       },
       "original": {
@@ -671,11 +671,11 @@
     "quickshell": {
       "flake": false,
       "locked": {
-        "lastModified": 1786814218,
-        "narHash": "sha256-tEwGoYRxFZ9AcGwIZX0ZE7aAGbNQ6IqbGEXT43U1UzI=",
+        "lastModified": 1790351745,
+        "narHash": "sha256-iD+EZdTMP9GHNnk72iqu4UTzHYO2QTv9hqhpkNryikM=",
         "owner": "harshilbhatt2001",
         "repo": "quickshell",
-        "rev": "d8b877e22cf6cf594a5faa0db2bf6e0ee3100a8e",
+        "rev": "3e09cff9912e8c86e4e16fedbf5dbc1d16c82ae9",
         "type": "github"
       },
       "original": {
@@ -823,6 +823,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": [
+          "hyprland",
           "nixpkgs"
         ]
       },
