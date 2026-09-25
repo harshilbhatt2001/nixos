@@ -3,6 +3,11 @@
   flake.nixosModules.antonConfiguration = {pkgs, ...}: {
     networking.hostName = "anton";
 
+    # This value determines the NixOS release from which the default settings
+    # for stateful data were taken. Leave it at the release of the first
+    # install of this system; a new host sets its own.
+    system.stateVersion = "26.05";
+
     # Bootloader: Limine on the dedicated NixOS ESP (see hardware.nix).
     # Secure Boot chain: firmware verifies the sbctl-signed limine binary,
     # limine verifies its enrolled config, the config's checksums verify the

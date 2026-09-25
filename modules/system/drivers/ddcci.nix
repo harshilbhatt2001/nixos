@@ -1,4 +1,4 @@
-{...}: {
+{self, ...}: {
   # DDC/CI brightness control for external monitors (anton: AOC Q27P2G5 on
   # DP-1 of the 9070 XT). Two layers:
   #  - hardware.i2c: loads i2c-dev and exposes /dev/i2c-* to the i2c group,
@@ -27,14 +27,15 @@
     hardware.i2c.enable = true;
     boot.extraModulePackages = [config.boot.kernelPackages.ddcci-driver];
     boot.kernelModules = ["ddcci_backlight"];
-    users.users."habh".extraGroups = ["i2c"];
+    users.users.${self.lib.user.name}.extraGroups = ["i2c"];
     environment.systemPackages = [pkgs.ddcutil];
 
     systemd.services.ddcci-attach = {
       description = "Attach connected DDC/CI monitors to the ddcci driver";
       wantedBy = ["multi-user.target"];
-      after = ["systemd-modules-load.service" "systemd-udev-settle.service"];
-      wants = ["systemd-udev-settle.service"];
+      # No systemd-udev-settle (deprecated, and it delays boot): a monitor
+      # whose i2c bus shows up late is caught by the hotplug rule below.
+      after = ["systemd-modules-load.service"];
       # no RemainAfterExit: the udev rule below re-wants the unit on hotplug,
       # which only re-runs it if it has gone back to inactive
       serviceConfig.Type = "oneshot";

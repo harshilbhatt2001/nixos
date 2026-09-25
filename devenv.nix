@@ -34,7 +34,7 @@
   scripts.rebuild-diff = {
     description = "build the system closure and show what would change against the running one";
     exec = ''
-      nom build .#nixosConfigurations.anton.config.system.build.toplevel "$@"
+      nom build ".#nixosConfigurations.$(hostname).config.system.build.toplevel" "$@"
       nvd diff /run/current-system ./result
     '';
   };
