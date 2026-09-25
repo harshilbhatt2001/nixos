@@ -34,6 +34,21 @@
 
     services.displayManager.defaultSession = "hyprland";
 
+    # The portals (Requisite=graphical-session.target) and anything else
+    # bound to the graphical session need this target, and nothing provides
+    # it: Hyprland stopped starting hyprland-session.target itself (uwsm is
+    # the upstream answer), nixpkgs only defines it under withUWSM, and the
+    # hyprwm package ships no unit. Same shape as upstream's old
+    # systemd/hyprland-session.target; events.lua in the hypr config starts
+    # it on hyprland.start and stops it on hyprland.shutdown.
+    systemd.user.targets.hyprland-session = {
+      description = "Hyprland compositor session";
+      documentation = ["man:systemd.special(7)"];
+      bindsTo = ["graphical-session.target"];
+      wants = ["graphical-session-pre.target"];
+      after = ["graphical-session-pre.target"];
+    };
+
     environment.systemPackages = with pkgs; [
       gsettings-desktop-schemas
       # Also on the runtime PATH (which serves the binds); installed here too
