@@ -3,7 +3,7 @@
   # `perSystem` silently produces no outputs and every `self'.packages.*`
   # reference dangles.
   #
-  # Linux-only for now: the wrapped desktop packages (niri) don't evaluate on
+  # Linux-only for now: the wrapped desktop packages (hyprland) aren't built for
   # darwin, which would fail `nix flake check` for those systems.
   config = {
     systems = [

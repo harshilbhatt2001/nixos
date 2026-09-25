@@ -1,13 +1,7 @@
 {self, ...}: {
-  # Shared desktop base plus the two selectable desktop-environment groups:
-  #  - hyprland     (features/hyprland): the reference's custom DE —
-  #                 quickshell, otter-launcher, wlogout, wpaperd…
-  #                 It sets services.displayManager.defaultSession, so it is
-  #                 the default session at the login screen.
-  #  - niriDesktop  (./niri.nix): the pre-hyprland setup, now just niri
-  #                 (the legacy installer GNOME + GDM are gone; sddm is the
-  #                 display manager for every session).
-  # Drop either group here to remove that environment wholesale.
+  # Shared desktop base plus the desktop environment, hyprland
+  # (features/hyprland): the reference's custom DE — quickshell,
+  # otter-launcher, wlogout, wpaperd… sddm is the display manager.
   flake.nixosModules.desktop = {pkgs, ...}: {
     imports = with self.nixosModules; [
       core
@@ -17,8 +11,7 @@
       kitty
       sddm
       hyprland
-      niriDesktop
-      way-edges # volume/brightness edge sliders, started by both compositors
+      way-edges # volume/brightness edge sliders, autostarted from events.lua
       ytmdesktop # Mod+S music scratchpad (features/keymap action `music`)
     ];
 
@@ -60,9 +53,8 @@
     services.gvfs.enable = true; # trash/MTP/network shares in file managers
     services.avahi.enable = true; # network printer discovery for CUPS
 
-    # Secret Service for portals/apps; sddm's PAM hook (features/sddm) unlocks
-    # it at login. Pinned here explicitly — it otherwise rides in only via
-    # programs.niri's module, and dropping niriDesktop would silently lose it.
+    # Secret Service for apps; sddm's PAM hook (features/sddm) unlocks it at
+    # login.
     services.gnome.gnome-keyring.enable = true;
   };
 }

@@ -1,23 +1,20 @@
 {lib, ...}: let
   # ---------------------------------------------------------------------------
-  # The shared keymap: one compositor-neutral table, consumed by every desktop
-  # environment in this repo.
+  # The shared keymap: one compositor-neutral table for the binds that need
+  # a store path or should survive a compositor swap. features/hyprland
+  # renders it to Lua at /run/hypr/keymap.lua, read by binds.lua in the
+  # out-of-store hypr checkout; another compositor would get its own
+  # translator next to toHyprlandLua.
   #
-  #   - niri      features/niri renders it into the wrapper's KDL `binds`
-  #   - hyprland  features/hyprland renders it to Lua at /run/hypr/keymap.lua,
-  #               read by binds.lua in the out-of-store hypr checkout
-  #
-  # Keys use niri's spelling ("Mod+Shift+H", "XF86AudioMute",
-  # "Mod+WheelScrollRight"); `toHyprland` translates. `Mod` is Super.
+  # Keys are spelled "Mod+Shift+H", "XF86AudioMute", "Mod+WheelScrollRight";
+  # `toHyprKey` translates. `Mod` is Super.
   #
   # Actions (compositor-neutral vocabulary; each translator maps them):
-  #   spawn <args>            run a command; args[0] is a program *name*, resolved
-  #                           per compositor (niri: store path, hyprland: the
-  #                           /run/hypr-runtime-env PATH)
-  #   launcher                the app launcher (noctalia on niri, otter on hypr)
+  #   spawn <args>            run a command; args[0] is a program *name*,
+  #                           resolved on the /run/hypr-runtime-env PATH
+  #   launcher                the app launcher (otter-launcher)
   #   music                   toggle the floating YouTube Music scratchpad
-  #                           (spawns ytmdesktop on first use; hyprland:
-  #                           special:music, niri: named workspace "music")
+  #                           (spawns ytmdesktop on first use; special:music)
   #   close-window  quit  toggle-floating  maximize  fullscreen
   #   focus-{left,right,up,down}   move-{left,right,up,down}
   #   focus-workspace <n>     move-to-workspace <n>
@@ -25,7 +22,7 @@
   #   screenshot-{area,screen,window}
   #
   # Per-bind attributes: action (required), args, desc, locked (works on the
-  # lock screen), cooldown (ms; only scroll binds need it, niri honours it).
+  # lock screen).
   # Anything only one compositor can do stays in that compositor's own config.
   # ---------------------------------------------------------------------------
   bind = action: attrs:
@@ -34,7 +31,6 @@
       args = [];
       desc = "";
       locked = false;
-      cooldown = null;
     }
     // attrs;
   act = action: desc: bind action {inherit desc;};
@@ -102,14 +98,8 @@
       # Rapoo thumb wheel: it reports as horizontal scroll. Mod is required —
       # an unmodified scroll bind would swallow horizontal scrolling in every
       # app. Swap next/prev here if the direction feels backwards.
-      "Mod+WheelScrollRight" = bind "focus-workspace-next" {
-        desc = "thumb wheel: next workspace";
-        cooldown = 150;
-      };
-      "Mod+WheelScrollLeft" = bind "focus-workspace-prev" {
-        desc = "thumb wheel: previous workspace";
-        cooldown = 150;
-      };
+      "Mod+WheelScrollRight" = act "focus-workspace-next" "thumb wheel: next workspace";
+      "Mod+WheelScrollLeft" = act "focus-workspace-prev" "thumb wheel: previous workspace";
 
       # Screenshots (no Mod)
       "Print" = act "screenshot-area" "screenshot area";
@@ -128,62 +118,6 @@
       "XF86AudioStop" = media ["playerctl" "stop"] "stop playback";
     }
     // workspaceBinds;
-
-  # --- niri ------------------------------------------------------------------
-
-  # Default action → KDL node. Overridable per action by the caller.
-  niriActions = {
-    close-window = _: {close-window = _: {};};
-    quit = _: {quit = _: {};};
-    toggle-floating = _: {toggle-window-floating = _: {};};
-    maximize = _: {maximize-column = _: {};};
-    fullscreen = _: {fullscreen-window = _: {};};
-    focus-left = _: {focus-column-left = _: {};};
-    focus-right = _: {focus-column-right = _: {};};
-    focus-up = _: {focus-window-or-workspace-up = _: {};};
-    focus-down = _: {focus-window-or-workspace-down = _: {};};
-    move-left = _: {move-column-left = _: {};};
-    move-right = _: {move-column-right = _: {};};
-    move-up = _: {move-window-up-or-to-workspace-up = _: {};};
-    move-down = _: {move-window-down-or-to-workspace-down = _: {};};
-    focus-workspace = b: {focus-workspace = builtins.head b.args;};
-    move-to-workspace = b: {move-column-to-workspace = builtins.head b.args;};
-    focus-workspace-next = _: {focus-workspace-down = _: {};};
-    focus-workspace-prev = _: {focus-workspace-up = _: {};};
-    move-to-workspace-next = _: {move-column-to-workspace-down = _: {};};
-    move-to-workspace-prev = _: {move-column-to-workspace-up = _: {};};
-    screenshot-area = _: {screenshot = _: {};};
-    screenshot-screen = _: {screenshot-screen = _: {};};
-    screenshot-window = _: {screenshot-window = _: {};};
-  };
-
-  # toNiri { resolve = { kitty = "/nix/store/…/bin/kitty"; … }; actions = { launcher = …; }; }
-  #   resolve: program name → executable, for spawn's args[0]; unresolved names
-  #            fall through as-is (PATH lookup at runtime).
-  #   actions: extra/overriding action translators (bind → KDL node attrset).
-  toNiri = {
-    resolve ? {},
-    actions ? {},
-  }: let
-    translators =
-      niriActions
-      // {
-        spawn = b: {
-          spawn-sh = lib.escapeShellArgs ([(resolve.${builtins.head b.args} or (builtins.head b.args))] ++ builtins.tail b.args);
-        };
-      }
-      // actions;
-    render = key: b: let
-      content = (translators.${b.action} or (throw "keymap: no niri translation for action `${b.action}` (bind ${key})")) b;
-      props =
-        lib.optionalAttrs b.locked {allow-when-locked = true;}
-        // lib.optionalAttrs (b.cooldown != null) {cooldown-ms = b.cooldown;};
-    in
-      if props == {}
-      then content
-      else _: {inherit props content;};
-  in
-    lib.mapAttrs render binds;
 
   # --- hyprland --------------------------------------------------------------
 
@@ -258,6 +192,6 @@
     "-- generated from modules/features/keymap in the nixos repo; do not edit\nreturn " + lib.generators.toLua {} entries + "\n";
 in {
   # No NixOS module and no package: pure data plus translators, exposed as a
-  # flake lib so features/niri and features/hyprland can pull it in by name.
-  flake.lib.keymap = {inherit binds toNiri toHyprlandLua toHyprKey;};
+  # flake lib so features/hyprland can pull it in by name.
+  flake.lib.keymap = {inherit binds toHyprlandLua toHyprKey;};
 }

@@ -6,7 +6,7 @@
   #  - ddcci-driver: out-of-tree kernel module that probes the DDC/CI address
   #    (0x37) on every GPU i2c bus and registers each answering monitor as
   #    /sys/class/backlight/ddcci<bus>. That makes the monitor look like a
-  #    laptop panel, so brightnessctl (the niri brightness keys) and
+  #    laptop panel, so brightnessctl and
   #    way-edges' `backlight` slider (via logind SetBrightness, no root) work
   #    unchanged.
   # The driver cannot autoprobe on kernels >= 6.8 (it logs exactly that), so

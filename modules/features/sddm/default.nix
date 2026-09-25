@@ -15,7 +15,7 @@
     };
     # GDM auto-unlocked gnome-keyring at login; SDDM needs this opt-in or
     # every keyring consumer prompts for the password after login. (The
-    # keyring service itself is enabled by programs.niri's module.)
+    # keyring service itself is enabled in system/desktop.)
     security.pam.services.sddm.enableGnomeKeyring = true;
   };
 }
