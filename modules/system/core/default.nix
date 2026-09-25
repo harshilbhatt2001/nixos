@@ -8,7 +8,15 @@
       sudo
     ];
 
-    services.openssh.enable = true;
+    # Keys only: ~/.ssh/authorized_keys, no passwords or root logins.
+    services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "no";
+      };
+    };
 
     # Everyday CLI baseline, from the reference's core (minus vim — neovim
     # is its own feature — and with free p7zip instead of p7zip-rar).

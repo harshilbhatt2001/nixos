@@ -32,10 +32,7 @@
       variant = "";
     };
 
-    # Enable CUPS to print documents.
-    services.printing.enable = true;
-
-    hardware.bluetooth.enable = true; # waybar/quickshell bluetooth widgets
+    hardware.bluetooth.enable = true; # quickshell bluetooth widget, bluetui
     services.upower.enable = true; # quickshell BatteryManager (UPower dbus)
     services.udisks2.enable = true; # removable-drive automount
     # udisks2 mounts removable media freely, but internal partitions (the
@@ -52,7 +49,6 @@
       });
     '';
     services.gvfs.enable = true; # trash/MTP/network shares in file managers
-    services.avahi.enable = true; # network printer discovery for CUPS
 
     # Secret Service for apps; sddm's PAM hook (features/sddm) unlocks it at
     # login.
