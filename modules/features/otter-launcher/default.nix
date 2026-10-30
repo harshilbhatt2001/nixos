@@ -14,16 +14,12 @@
     packages = {
       otter-launcher = let
         extra-config = ''
-          [overlay]
-          # FIXME: --transfer-mode=stream works around kitty 0.49.0, whose
-          # terminal side rejects the default shared-memory transfer ("POSIX
-          # SHM names must start with /") and the /dev/shm file fallback, so
-          # icat retried on every redraw and wrecked the layout. Fixed in kitty
-          # 0.49.1 (changelog: "icat: Fix a regression in 0.49.0
-          # --transfer-mode=memory not displaying anything"); drop the flag
-          # once nixpkgs ships >= 0.49.1.
-          overlay_cmd = "${lib.getExe pkgs.kitty} +kitten icat --transfer-mode=stream --fit height --align left --no-trailing-newline ${./cat.png}"
-          overlay_trimmed_lines = 0
+          [image]
+          format = "kitty" # graphics protocol; kitty, sixel, iterm2, symbol
+          path = "${./cat.png}"
+          width = 20 # columns, for a left/right image
+          position = "left"
+          padding = [0, 1, 0, 0] # [top, right, down, left]
         '';
         # close the config over the store: @name@ placeholders in config.toml
         # become absolute store paths. PATH additions don't survive into module

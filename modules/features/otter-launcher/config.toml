@@ -1,46 +1,36 @@
 [general]
+height = 7 # lines the launcher occupies; 0 for fullscreen
 default_module = "app" # module to run when no prefix is matched
 empty_module = "app" # run with an empty prompt
 exec_cmd = "@fish@ -c" # exec command of your shell
 vi_mode = false # set true to use vi keybinds, false emacs keybinds
-esc_to_abort = true # useful for vi users
 cheatsheet_entry = "?" # when prompted, will show a list of configured modules
 cheatsheet_viewer = "less -R; clear" # command to show cheatsheet; through piping stdout
-clear_screen_after_execution = false
-loop_mode = false # don't quit after executing a module, useful with scratchpads; stderr is hidden in loop mode
-external_editor = "nvim" # if set, press ctrl+x ctrl+ee (or v in vi normal mode) to edit prompt in the specified program
-delay_startup = 0 # sometimes the otter runs too fast even before the terminal window is ready; this slows it down by milliseconds; useful when chafa image is skewed
+external_editor = "nvim" # ctrl+x ctrl+e (or v in vi normal mode) edits the prompt in this program
 
 [interface]
-# use three quotes to write longer codes
-header = """
-  \x1b[1;38;2;203;166;247m$USER@nixos\x1b[0m
-	"""
-header_cmd = '' # run a command and print stdout above the header
-header_cmd_trimmed_lines = 0 # remove trailing lines from header_cmd output, in case of some programs appending excessive empty lines
-place_holder = "execute" # at the input field
+padding = [0, 1, 0, 1] # [top, right, down, left]
+# ANSI codes and shell expansion (through exec_cmd) are allowed
+header = "\x1b[1;38;2;203;166;247m$USER@nixos\x1b[0m"
+# colours: https://docs.rs/ratatui/latest/ratatui/prelude/enum.Color.html
+prompt_sign = "> "
+prompt_sign_color = "magenta"
+placeholder = "execute"
 suggestion_mode = "list" # available options: list, hint
-# fish syntax — expanded through exec_cmd; otter exports COLUMNS to the subshell
-separator = """
-$(set -l text "                      "; printf "\u001B[0;90m%s %s" "$text" (string repeat -n (math "$COLUMNS" - (string length -- "$text") - 3) ─))"""
-footer = "" # add a line after suggestion list
-suggestion_lines = 7 # 0 to disable suggestions and tab completion
+suggestion_position = "bottom" # relative to the input field
+separator = true # line between input field and suggestion list (list mode only)
+separator_label = ""
+scrollbar = false
 list_prefix = "  "
-selection_prefix = "\u001B[31;1m "
+selection_prefix = "▌ "
+selection_prefix_color = "red"
+inverse_selection = false
 prefix_padding = 3 # format prefixes to have a uniformed width
-default_module_message = "  \u001B[33mlaunch\u001B[0m app" # shown when the default module is in use
-empty_module_message = "" # shown when the empty module is in use
-customized_list_order = false # false to list modules alphabetically; true to list as per the configured order in the below [[modules]] section
-indicator_with_arg_module = " * " # the sign showing whether a module should run with an argument
-indicator_no_arg_module = " "
-# below color options affect all modules; per-module coloring can be configured using ansi codes individually
-prefix_color = "\u001B[33m"
-description_color = "\u001B[39m"
-place_holder_color = "\u001B[30m"
-hint_color = "\u001B[30m" # suggestion color in hint mode
-# move the interface rightward or downward
-move_interface_right = 21
-move_interface_down = 0
+prefix_color = "yellow"
+description_color = "reset"
+indicator_args = " * " # shown for modules taking an argument
+indicator_bare = " "
+indicator_color = "red"
 
 [[modules]]
 description = "programs"
