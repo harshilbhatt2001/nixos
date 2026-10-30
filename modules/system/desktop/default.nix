@@ -14,6 +14,7 @@
       hyprland
       way-edges # volume/brightness edge sliders, autostarted from events.lua
       ytmdesktop # Mod+S music scratchpad (features/keymap action `music`)
+      imv # image viewer + `slideshow DIR`
     ];
 
     # Plain desktop utilities shared by every session (no wrapping needed).
