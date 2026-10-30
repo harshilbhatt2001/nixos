@@ -49,13 +49,20 @@
     };
 
     # ~/ws lives on the btrfs data partition (~/ws-linux is the old
-    # on-rootfs one). `L+` so the symlink is retargeted even if one already
-    # exists; the `d` rule owns the target dir for habh (fine on btrfs,
-    # unlike the NTFS mount where it would warn on every boot).
+    # on-rootfs one). A bind mount, not a symlink: tools that canonicalize
+    # paths (devenv's DEVENV_ROOT) would otherwise disagree with the shell's
+    # logical $PWD, and the devenv fish hook exits its shell on every prompt
+    # thinking you cd'd out. The `d` rule owns the target dir for habh (fine
+    # on btrfs, unlike the NTFS mount where it would warn on every boot).
     systemd.tmpfiles.rules = [
       "d /mnt/gen5-btrfs/ws 0755 habh users -"
-      "L+ /home/habh/ws - - - - /mnt/gen5-btrfs/ws"
     ];
+    fileSystems."/home/habh/ws" = {
+      device = "/mnt/gen5-btrfs/ws";
+      fsType = "none";
+      options = ["bind" "nofail"];
+      depends = ["/mnt/gen5-btrfs"];
+    };
 
     # Hybrid graphics: Hyprland (aquamarine) renders on the first device in
     # AQ_DRM_DEVICES, so the Arrow Lake iGPU does basic compositing and the
