@@ -27,6 +27,13 @@
       portalPackage = inputs.hyprland.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
 
+    # nixpkgs gives Hyprland a cap_sys_nice wrapper (for SCHED_RR), but its
+    # source must be an ELF and ours is the script wrapper that adds --config
+    # and MODULES_ROOT. Pointing it at the upstream ELF instead would break the
+    # session: start-hyprland execvp()s `Hyprland` from PATH, where
+    # /run/wrappers/bin comes first, so it would run without our flags.
+    security.wrappers.Hyprland.enable = false;
+
     # Installs hyprlock and its PAM service; without /etc/pam.d/hyprlock the
     # unlock falls back to PAM's `other` (pam_deny). wlogout's lock button
     # runs it.
