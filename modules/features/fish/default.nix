@@ -43,6 +43,7 @@
       nsh = "nix-shell -p";
       # nh finds this repo via NH_FLAKE (programs.nh in system/core).
       nrs = "nh os switch";
+      nb = "nom build";
       vinix = "nvim ~/.config/nixos";
     };
   };

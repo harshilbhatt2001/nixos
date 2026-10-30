@@ -11,7 +11,7 @@
   };
 
   packages = with pkgs; [
-    nix-output-monitor # nom: readable build output
+    nh # rebuild-diff below
     nvd # nvd diff <old> <new>: package-level diff between two system closures
     nix-tree # browse what pulls what into a closure
   ];
@@ -52,10 +52,11 @@
 
   scripts.rebuild-diff = {
     description = "build the system closure and show what would change against the running one";
+    # nh builds through nom and prints the nvd diff itself; nothing is
+    # activated. Extra args go to nh (`rebuild-diff -- --max-jobs 2`).
     exec = ''
       desk-status
-      nom build ".#nixosConfigurations.$(hostname).config.system.build.toplevel" "$@"
-      nvd diff /run/current-system ./result
+      nh os build "$DEVENV_ROOT" "$@"
     '';
   };
 }
