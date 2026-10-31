@@ -34,6 +34,20 @@
     # /run/wrappers/bin comes first, so it would run without our flags.
     security.wrappers.Hyprland.enable = false;
 
+    # The compositor keeps the nixpkgs its hyprwm flake pins (see flake.nix),
+    # so it runs on that nixpkgs' glibc, and the GBM/EGL driver it dlopen()s
+    # from /run/opengl-driver must not need a newer one: a system mesa built
+    # against a newer glibc fails to load ("GLIBC_2.43 not found") and the
+    # session aborts with "Cannot open backend: no allocator available".
+    # Taking mesa from Hyprland's nixpkgs is the wiki's answer; everything
+    # else on the system has a glibc at least as new, so it loads it fine.
+    hardware.graphics = let
+      hyprPkgs = inputs.hyprland.inputs.hyprland.inputs.nixpkgs.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+    in {
+      package = hyprPkgs.mesa;
+      package32 = hyprPkgs.pkgsi686Linux.mesa;
+    };
+
     # Installs hyprlock and its PAM service; without /etc/pam.d/hyprlock the
     # unlock falls back to PAM's `other` (pam_deny). wlogout's lock button
     # runs it.
